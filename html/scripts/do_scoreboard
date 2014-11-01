@@ -1,0 +1,32 @@
+#!/bin/bash
+
+#--------------------------------------- How to use it ------------------------------------------------------#
+# this script will create a scoreboard and connect it with an agent 
+# this script is written only for using from other scripts
+# it should not be used from terminal 
+#------------------------------------------------------------------------------------------------------------#
+
+
+scoreboard_file=${1:-scb.sv}
+scoreboard_class=${2:-default_scb};
+scoreboard_ins=${3:-default_scb_ins};
+scb_pkt=${4:-sent_pkt}
+scoreboard_port=${5:-scb_port};
+
+
+env_file=${6:-default_env.sv};
+agent_ins=${7:-agent_ins};
+monitor_ins=${8:-monitor};
+mon_port=${9:-mon_port};
+shift;
+sequence_item_class=${9:-trans};
+shift
+sequence_item_ins=${9:-trans_ins}
+shift
+active=${9:-ACTIVE};
+shift;
+destination=${9:-mydir};
+
+../scripts/create_scb $scoreboard_class $scoreboard_ins $active $env_file $destination> $destination/$scoreboard_file
+../scripts/create_scb_port $scoreboard_file $scoreboard_class $scb_pkt $sequence_item_class $sequence_item_ins $destination
+../scripts/create_agent_scb $env_file $agent_ins $monitor_ins $mon_port $scoreboard_ins $scoreboard_port $active $destination

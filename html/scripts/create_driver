@@ -1,0 +1,113 @@
+#!/bin/bash
+
+
+#--------------------------------------- How to use it ----------------------------------------------#
+# this script will do few things
+# 1. take instance of driver class inside agent class
+# 2. build that instance inside the build_phase of agent class
+# 3. create a driver class
+# it takes seven arguments 
+# arguments are: 
+# 1. name of driver class 
+# 2. name of driver instance that will be created inside agent class
+# 3. name of sequence_item class
+# 4. name of sequence_item_ins
+# 5. no need : ACTIVE
+# 6. name of agent agent file
+# 7. destination folder name
+# Example:
+#        ./create_driver driver driver_ins trans trans_ins ACTIVE agent.sv destination_folder > destination_folder/file_name
+# here, file_name indicates where the code of driver class wil be written
+#----------------------------------------------------------------------------------------------------#
+
+
+driver_class=${1:-default_driver}
+driver_ins=${2:-driver}
+sequence_item_class=${3:-trans}
+sequence_item_ins=${4:-trans_ins}
+active=${5:-ACTIVE};
+agent_file=${6:-default_agent.sv};
+destination=${7:-mydir};
+
+active="ACTIVE"
+build='UVM_'$active'_BUILD';
+connect='UVM_'$active'_CONNECT';
+
+
+# Make instance of the created driver inside the given agent class
+sed -i "/uvm_agent/a $driver_class $driver_ins ;" $destination/$agent_file
+
+# Create instance of the driver class inside build_phase of agent class 
+sed -i "/$build/a $driver_ins=$driver_class::type_id::create(\"$driver_ins\",this);\n" $destination/$agent_file
+
+
+
+
+cat <<_EOF_
+
+class $driver_class extends uvm_driver #($sequence_item_class);
+
+	\`uvm_component_utils($driver_class)
+
+
+
+
+	function new(string name, uvm_component parent);
+		super.new(name, parent);
+	endfunction : new
+
+
+
+	virtual function void build_phase(uvm_phase phase);
+		super.build_phase(phase);
+      	endfunction : build_phase
+
+
+
+
+	virtual function void connect_phase(uvm_phase phase);
+		super.connect_phase(phase);
+	      \`uvm_info(get_full_name(), "In connect : UVM_CONNECT", UVM_LOW);
+	endfunction : connect_phase
+
+
+
+	virtual task run_phase(uvm_phase phase);
+                super.run_phase(phase);
+		$sequence_item_class $sequence_item_ins;
+	endtask : run_phase
+
+
+
+
+endclass : $driver_class
+
+_EOF_
+
+
+
+
+
+#-------------------------------------------------- THE END ---------------------------------------------------------#
+
+
+
+
+			
+
+
+
+
+
+	
+
+
+
+
+
+
+
+
+
+
+

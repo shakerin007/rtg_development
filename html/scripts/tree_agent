@@ -1,0 +1,47 @@
+#!/bin/bash
+destination=$1;shift;
+filename=$1;
+sed -n -e  '/uvm_c/,$!p' $destination/$filename>$destination/temp1;
+sed -n -e '/_active_/,$!p' $destination/temp1 > $destination/temp;
+
+driver_class=$(grep driver $destination/temp | cut -d ' ' -f 1) 
+monitor_class=$(grep monitor $destination/temp | cut -d ' ' -f 1)
+sequencer_class=$(grep sequencer $destination/temp | cut -d ' ' -f 1)
+
+driver_ins=$(grep driver $destination/temp | cut -d ' ' -f 2) 
+monitor_ins=$(grep monitor $destination/temp | cut -d ' ' -f 2)
+sequencer_ins=$(grep sequencer $destination/temp | cut -d ' ' -f 2)
+
+count=1;
+echo "************* driver class **************"
+while read line; do 
+echo  --- $count ------ "$line" -------;count=$(($count+1)); done <<< "$driver_class" 
+
+count=1;
+echo "************* driver instance ***************"
+while read line; do 
+echo  --- $count ------ "$line" -------;count=$(($count+1)); done <<< "$driver_ins" 
+
+count=1;
+echo "************* monitor class *****************"
+while read line; do 
+echo  --- $count ------ "$line" -------;count=$(($count+1)); done <<< "$monitor_class" 
+
+count=1;
+echo "************* monitor instance **************"
+while read line; do 
+echo  --- $count ------ "$line" -------;count=$(($count+1)); done <<< "$monitor_ins" 
+
+count=1;
+echo "************* sequencer class ***************"
+while read line; do 
+echo  --- $count ------ "$line" -------;count=$(($count+1)); done <<< "$sequencer_class" 
+
+count=1;
+echo "************* sequencer instance ************"
+while read line; do 
+echo  --- $count ------ "$line" -------;count=$(($count+1)); done <<< "$sequencer_ins" 
+
+
+
+

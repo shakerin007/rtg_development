@@ -1,0 +1,26 @@
+#!/bin/bash
+
+
+#--------------------------------------- How to use it ------------------------------------------------------#
+# this script will create a subscriber and connect it with agent
+# this script is written only for using from other scripts
+# it should not be used from terminal 
+#------------------------------------------------------------------------------------------------------------#
+
+subscriber_file=${1:-subscriber.sv};
+subscriber_class=${2:-default_sbr};
+subscriber_ins=${3:-default_sub_ins};
+sequence_item_class=${4:-default_seq_item};
+
+
+env_file=${5:-env.sv};
+agent_ins=${6:-agent_ins};
+agent_port=${7:-a_port};
+
+active=${8:-ACTIVE};
+shift;
+destination=${8:-mydir};
+
+
+../scripts/create_subscriber $subscriber_class $subscriber_ins $sequence_item_class $active $env_file $destination> $destination/$subscriber_file
+../scripts/connect_agent_sub $env_file $agent_ins $subscriber_ins $agent_port $active $destination

@@ -1,0 +1,72 @@
+#!/bin/bash
+
+#--------------------------------------- How to use it ------------------------------------------------------#
+# this script will do few things
+# 1. it creates an instance of sequencer class inside agent
+# 2. it takes instance of sequencer class inside virtual sequencer class 
+# 3. it connects sequencer instance and virtual sequencer instance inside environment class  
+# it takes some arguments 
+# this script is written only for using from other scripts
+# it should not be used from terminal 
+#------------------------------------------------------------------------------------------------------------#
+
+sequencer_class=${1:-default_sequencer};
+sequencer_ins=${2:-sequencer};
+active=${3:-ACTIVE};
+agent_file=${4:-default_agent.sv};
+agent_ins=${5:-agent_ins};
+shift;
+virtual_sequencer_file=${5:-default_vsequencer.sv};
+shift;
+virtual_sequencer_class=${5:-default_vsequencer};
+shift;
+env_file=${5:-env.sv};
+shift;
+destination=${5:-mydir};
+
+active="ACTIVE"
+new_f='UVM_NEW';
+build='UVM_'$active'_BUILD';
+connect='UVM_'$active'_CONNECT';
+new='function new';
+port="uvm_analysis_port#";
+virtual_sequencer_ins="$virtual_sequencer_class"'_ins';
+
+# make an instance of the sequencer class inside the given agent class
+sed -i "/uvm_agent/a $sequencer_class $sequencer_ins ;" $destination/$agent_file
+
+# create the instance of sequencer class inside the build_phase of the given agent class
+sed -i "/$build/a $sequencer_ins=$sequencer_class::type_id::create(\"$sequencer_ins\",this);" $destination/$agent_file
+
+sed -i "s/.*$new.*/$sequencer_class $sequencer_ins;\n&/" $destination/$virtual_sequencer_file
+
+
+sed -i "/$connect/a $virtual_sequencer_ins.$sequencer_ins=$agent_ins.$sequencer_ins;" $destination/$env_file
+
+
+cat << _EOF_
+
+
+class $sequencer_class extends uvm_sequencer #();
+	\`uvm_component_utils($sequencer_class)
+	
+
+
+	function new(string name, uvm_component parent);
+		super.new(name, parent);
+	endfunction : new
+
+
+
+	virtual function void build_phase(uvm_phase phase);
+		super.build_phase(phase);
+	endfunction : build_phase
+
+
+
+endclass:$sequencer_class
+_EOF_
+
+
+
+#-------------------------------------------------- THE END ---------------------------------------------------------#
