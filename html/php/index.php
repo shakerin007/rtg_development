@@ -14,8 +14,12 @@ $value6=$_POST["value6"];
 
 shell_exec("./../scripts/testbench $value2 $value3 $value4 $value5 $value6");
 $files=glob("../php/$value4/*"); 
-foreach($files as $file) 
-echo "<a href = '../$value4/$file' >download $file</br> </a>";
+foreach($files as $file){
+$split_size=8+strlen($value4);    
+$name=substr($file,$split_size);
+echo "<a href = '../$value4/$file' >download  $name</br> </a>";
+
+}
 
 ?>
 
