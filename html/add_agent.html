@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<link type="text/css" rel="stylesheet" href="stylesheet.css"/>
+		<title>Create Agent</title>
+	</head>
+	<body>
+		<form action="/html/tags/html_form_tag_action.cfm" method="get">
+		<fieldset> 
+		<legend><h1> || Create Agent :: Input Options ||</h1></legend> 
+		
+		<div id="d1">
+			<h3>Add Agent:</h3>
+			<p>New agent Prefix: <input type="text" name="agent_prefix" value=""/></p>
+			<p>Prefix of Env Class: <input type="text" name="prefix_of_env" value=""/></p>
+			<p>Env Filename: <input type="text" name="env_filename" value=""  /></p>
+			<p>Agent Type: 
+			<input type="radio" name="agent_type" value="Active" /> Active
+			<input type="radio" name="agent_type" value="Passive" /> Passive
+			</p>
+			<p><input type="button" value="Add New Agent"/></p>
+		</div>
+				
+		</fieldset> 
+		</form>
+		<p><input type="button" value="Back"/></p>
+	</body>
+	
+</html>

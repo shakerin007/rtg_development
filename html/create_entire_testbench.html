@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<link type="text/css" rel="stylesheet" href="stylesheet.css"/>
+		<title>Create A Full Test-bench</title>
+	</head>
+	<body>
+		<form action="/html/tags/html_form_tag_action.cfm" method="get">
+		<fieldset> 
+		<legend><h1>|| Create Full Testbench :: Input Options ||</h1></legend> 
+		
+		<div id="d1">
+			<h3>Create a base Testbench:</h3>
+			<p>Filename Prefix: <input type="text" name="filename_prefix" value=""  /></p>
+			<p>Top Level Filename: <input type="text" name="top_level_filename" value=""  /></p>
+			<p><input type="button" value="Create base Testbench files"/></p>
+		</div>
+		
+		<div id="d2">
+			<h3>Connect Interface at Top Level:</h3>
+			<p>Interface Name: <input type="text" name="interface_name" value=""  /></p>
+			<p>Interface Name.Modport Name: <input type="text" name="interface_name_modport_name" value=""  /></p>
+			<p>Env Class Name: <input type="text" name="env_class_name" value=""  /></p>
+			<p>Agent Class Name: <input type="text" name="agent_class_name" value=""  /></p>
+			<p><input type="button" value="Connect Interface at Top Level"/></p>
+		</div>
+		
+		<div id="d3">
+			<h3>Import Interface to a File:</h3>
+			<p>File Name: <input type="text" name="filename" value=""  /></p>
+			<p><input type="button" value="Import Interface"/></p>
+		</div>
+		
+		
+		</fieldset> 
+		</form>
+		<p><input type="button" value="Back"/></p>
+	</body>
+	
+</html>
