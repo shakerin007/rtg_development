@@ -1,0 +1,42 @@
+*{
+	font-family: Courier;
+	font-size: 14px;
+}
+
+legend h1{
+	font-family: Courier;
+	font-size: 18px;
+		
+}
+
+h1,h2,h3{
+	color: 	#3D1F00;
+}
+
+body{
+	background-color: #FFFFE0;
+}
+
+#d1{
+	background-color: #C2F0FF;
+	border-radius: 5px;
+	padding-top: 3px;
+	padding-left: 12px;
+	padding-bottom: 1px;
+}
+
+#d2{
+	background-color: #C8FFC8;
+	border-radius: 5px;
+	padding-top: 3px;
+	padding-left: 12px;
+	padding-bottom: 1px;
+}
+
+#d3{
+	background-color: #FFC2B2;
+	border-radius: 5px;
+	padding-top: 3px;
+	padding-left: 12px;
+	padding-bottom: 1px;
+}

@@ -9,7 +9,7 @@ $DB = "company";
 
 $conn = mysql_connect("$ip:$port", "$user",'',"$DB")or die(mysql_error());
 mysql_select_db("$DB");//or die(mysql_error());
-$order = "SELECT username,password FROM login";
+$order = "INSERT INTO `login` (`username`,`password`) VALUES('shake','shake')";
 $result = mysql_query($order);
 //$query=mysql_query("SELECT username FROM login","$conn");//or die(mysql_error());
 
