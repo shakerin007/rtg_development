@@ -1,0 +1,65 @@
+#!/bin/bash
+
+#--------------------------------------- How to use it ------------------------------------------------------#
+# this script will do few things
+# 1. it creates an instance of virtual sequence class inside base test class
+# 2. it starts this sequence from specified sequencer  
+# it takes some arguments 
+# this script is written only for using from other scripts
+# it should not be used from terminal 
+#------------------------------------------------------------------------------------------------------------#
+
+
+
+virtual_sequence_class=${1:-default_vsequence};
+virtual_sequence_ins=${2:-vsequence_ins};
+virtual_sequencer=${3:-default_vsequencer};
+virtual_sequencer_ins=${4:-vsequencer_ins}
+base_test_file=${5:-test_base.sv};
+env_class=${6:-env};
+env_ins=${7:-env_ins};
+active=${8:-ACTIVE};
+shift;
+destination=${8:-mydir};
+
+
+new_f='UVM_NEW';
+build='UVM_'$active'_BUILD';
+connect='UVM_'$active'_CONNECT';
+run='UVM_'$active'_RUN';
+
+
+sed -i "/uvm_test/a $virtual_sequence_class $virtual_sequence_ins ;" $destination/$base_test_file
+sed -i "/$run/a $virtual_sequence_ins=$virtual_sequence_class::type_id::create(\"$virtual_sequence_ins\");\n$virtual_sequence_ins.start($env_ins.$virtual_sequencer_ins);" $destination/$base_test_file
+
+
+
+
+
+cat << _EOF_
+class $virtual_sequence_class extends uvm_sequence;
+  
+      \`uvm_object_utils($virtual_sequence_class)
+      \`uvm_declare_p_sequencer($virtual_sequencer)
+
+
+    	function new(string name="$virtual_sequence_class");
+		super.new(name);
+		\`uvm_info(get_full_name(), "In constructor UVM_ACTIVE_NEW ", UVM_LOW);
+	endfunction : new
+
+
+
+	task body();
+	fork
+	join
+	endtask: body
+
+
+endclass : $virtual_sequence_class
+
+_EOF_
+
+
+
+#-------------------------------------------------- THE END ------------------------------------------#

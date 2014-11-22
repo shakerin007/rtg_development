@@ -1,0 +1,111 @@
+#!/bin/bash
+
+
+#--------------------------------------- How to use it ----------------------------------------------#
+# this script will do few things
+# 1. take instance of agent class inside an environment class
+# 2. create and connect agent class inside build_phase and connect_phase respectively.
+# 3. create an agent class
+# it takes five arguments 
+# arguments are: 
+# 1. name of agent class 
+# 2. name of agent class's instance
+# 3. no need : ACTIVE
+# 4. name of environment file
+# 5. name of destination folder where environment file exists.
+# Example:
+#        ./create_agent agent agent_ins ACTIVE env.sv destination_folder > destination_folder/agent_file_name
+# here, agent_file_name is the name of the file where the agent class code will be written                                
+#----------------------------------------------------------------------------------------------------#
+
+
+agent_class=${1:-default_agent};
+agent_ins=${2:-default_agent_ins};
+active=${3:-ACTIVE};
+new_f='UVM_NEW';
+build='UVM_'$active'_BUILD';
+connect='UVM_'$active'_CONNECT';
+env_file=${4:-default_env.sv};
+
+destination=${5:-mydir};
+
+# Make instance of the created agent inside the given environment class
+sed -i "/uvm_env/a $agent_class $agent_ins ;" $destination/$env_file
+
+# Create instance of the agent class inside build_phase of environment class and
+# set the is_active variable after creating agent instance
+sed -i "/$build/a $agent_ins=$agent_class::type_id::create(\"$agent_ins\",this);\n$agent_ins.is_active=UVM_$active;" $destination/$env_file
+
+# declaring if-else loop inside the connect phase of environment class
+sed -i "/$connect/a if($agent_ins.is_active == UVM_ACTIVE)begin\n\`uvm_info(get_full_name(), \"In connect : UVM_ACTIVE_$agent_ins\", UVM_LOW);\n	end\nelse if($agent_ins.is_active == UVM_PASSIVE)begin\n\`uvm_info(get_full_name(), \"In connect : UVM_PASSIVE_$agent_ins\", UVM_LOW);\nend" $destination/$env_file
+
+
+
+cat << _EOF_
+
+
+class $agent_class extends uvm_agent;
+
+		uvm_active_passive_enum is_active = UVM_$active;
+		
+	\`uvm_component_utils_begin($agent_class)
+	      \`uvm_field_enum(uvm_active_passive_enum, is_active, UVM_ALL_ON)
+	\`uvm_component_utils_end
+
+		
+
+	function new (string name, uvm_component parent);
+			super.new(name, parent);
+			\`uvm_info(get_full_name(), "In connect : UVM_NEW", UVM_LOW);
+	endfunction : new
+
+
+
+	virtual function void build_phase(uvm_phase phase);
+			super.build_phase(phase);
+		    if(is_active == UVM_ACTIVE) begin
+			\`uvm_info(get_full_name(), "In connect : UVM_ACTIVE_BUILD", UVM_LOW);
+			\`uvm_info(get_full_name(), "In connect : Connected driver monitor ports", UVM_LOW);
+		    end  
+		    else if(is_active == UVM_PASSIVE) begin
+			\`uvm_info(get_full_name(), "In connect : UVM_PASSIVE_BUILD ", UVM_LOW);	
+			\`uvm_info(get_full_name(), "In connect : Connected Passive ", UVM_LOW);
+		    end
+	endfunction : build_phase
+
+
+
+	virtual function void connect_phase(uvm_phase phase);
+			super.connect_phase(phase);
+		    if(is_active == UVM_ACTIVE) begin
+			\`uvm_info(get_full_name(), "In connect : UVM_ACTIVE_CONNECT", UVM_LOW);
+			\`uvm_info(get_full_name(), "In connect : Connected driver monitor ports", UVM_LOW);
+		    end  
+		    else if(is_active == UVM_PASSIVE) begin
+			\`uvm_info(get_full_name(), "In connect : UVM_PASSIVE_CONNECT ", UVM_LOW);	
+			\`uvm_info(get_full_name(), "In connect : Connected Passive ", UVM_LOW);
+		    end
+	endfunction : connect_phase
+
+
+
+	virtual task run_phase(uvm_phase phase);
+			super.run_phase(phase);
+	endtask: run_phase
+
+
+
+endclass : $agent_class
+
+
+
+
+_EOF_
+
+
+
+
+
+
+
+#-------------------------------------------------- THE END ---------------------------------------------------------#

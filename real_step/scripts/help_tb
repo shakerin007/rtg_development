@@ -1,0 +1,39 @@
+#!/bin/bash
+echo "------------------------------"
+echo "----------- o o --------------"
+echo "-----------  V  --------------"
+echo "------------------------------"
+
+echo "Enter Script Name That you want to use:" 
+read script_name;
+if [ -f $script_name ]
+then  
+echo "---------------------------------"
+echo "---------- ARGUMENTS ------------"
+echo "---------------------------------"
+grep "=*{" $script_name| cut -d = -f 1
+echo ""
+echo "---------------------------------"
+echo ""
+echo "********* How to Use it *********"
+echo ""
+echo "Enter the following Command:"
+echo "./$script_name argument1 argument2 argument3 . . . . ."
+echo ""
+echo "------------------------------"
+echo "----------- o o --------------"
+echo "-----------  V  --------------"
+echo "------------------------------"
+
+fi
+
+if [ ! -f $script_name  ]
+then
+echo "----No Such Script Found------"
+echo "------------------------------"
+echo "----------- o o --------------"
+echo "-----------  ^  --------------"
+echo "------------------------------"
+fi
+
+

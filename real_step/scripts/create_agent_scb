@@ -1,0 +1,36 @@
+#!/bin/bash
+#--------------------------------------- How to use it ----------------------------------------------#
+# this script will connect agent with scoreboard
+# it needs many arguments 
+# it is written so that it can be used from other scripts
+# no need to use this from terminal                              
+#----------------------------------------------------------------------------------------------------#
+
+
+env_file=${1:-env.sv};
+agent_ins=${2:-agent_ins};
+monitor_ins=${3:-monitor};
+mon_port=${4:-mon_port};
+scoreboard_ins=${5:-scb};
+scoreboard_port=${6:-scb_port};
+active=${7:-ACTIVE};
+shift;
+destination=${7:-mydir};
+
+active="ACTIVE";
+passive="PASSIVE";
+agent_ins_search="UVM_$active""_""$agent_ins" ;
+agentp_ins_search="UVM_$passive""_""$agent_ins" ;
+
+sed -i "/$agent_ins_search/a $agent_ins.$monitor_ins.$mon_port.connect($scoreboard_ins.$scoreboard_port);\n" $destination/$env_file
+sed -i "/$agentp_ins_search/a $agent_ins.$monitor_ins.$mon_port.connect($scoreboard_ins.$scoreboard_port);\n" $destination/$env_file
+
+
+
+
+
+
+
+
+
+#-------------------------------------------------- THE END ---------------------------------------------------------#

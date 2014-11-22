@@ -1,0 +1,96 @@
+#!/bin/bash
+
+#--------------------------------------- How to use it ------------------------------------------------------#
+# this script will do few things
+# 1. It creates an instance of monitor class inside a driver
+# 2. writes basic structure of monitor inside specified file 
+# it takes some arguments 
+# this script is written only for using from other scripts
+# it should not be used from terminal 
+#------------------------------------------------------------------------------------------------------------#
+
+
+monitor_class=${1:-default_monitor};
+monitor_ins=${2:-monitor};
+sequence_item_class=${3:-trans};
+sequence_item_ins=${4:-trans_ins};
+active=${5:-ACTIVE};
+agent_class=${6:-default_agent.sv};
+shift;
+destination=${6:-mydir};
+
+new_f='UVM_NEW';
+active="ACTIVE";
+passive="PASSIVE";
+build='UVM_'$active'_BUILD';
+connect='UVM_'$active'_CONNECT';
+build_passive='UVM_'$passive'_BUILD';
+
+new='function new';
+port="uvm_analysis_port#";
+
+
+
+# Make instance of monitor inside the given agent class
+sed -i "/uvm_agent/a $monitor_class $monitor_ins ;" $destination/$agent_class
+
+# create monitor instance inside the build_phase of agent class
+sed -i "/$build/a $monitor_ins=$monitor_class::type_id::create(\"$monitor_ins\",this);" $destination/$agent_class
+sed -i "/$build_passive/a $monitor_ins=$monitor_class::type_id::create(\"$monitor_ins\",this);" $destination/$agent_class
+
+
+cat << _EOF_
+
+class $monitor_class  extends uvm_monitor;
+
+	    \`uvm_component_utils($monitor_class)
+
+	    
+
+	    $port($sequence_item_class) aport_$monitor_ins;
+	    $sequence_item_class $sequence_item_ins;
+
+
+
+	    function new(string name,uvm_component parent);
+		     super.new(name,parent);
+	             aport_$monitor_ins=new(" aport_$monitor_ins",this);
+	    endfunction:new
+
+
+
+	    virtual function void build_phase(uvm_phase phase);
+		    super.build_phase(phase);
+		   \`uvm_info(get_full_name(), "Inside build_phase", UVM_LOW);
+			$sequence_item_ins = $sequence_item_class::type_id::create("$sequence_item_ins");
+	    endfunction:build_phase
+
+
+
+
+	    virtual function void connect_phase(uvm_phase phase);
+		     super.connect_phase(phase);
+		    \`uvm_info(get_full_name(), "In connect : UVM_CONNECT", UVM_LOW);
+	    endfunction:connect_phase
+
+
+
+
+	    virtual task run_phase(uvm_phase phase);
+		    super.run_phase(phase);
+	    endtask:run_phase
+
+
+
+
+endclass:$monitor_class
+
+
+
+_EOF_
+
+
+
+
+
+#-------------------------------------------------- THE END ---------------------------------------------------------#

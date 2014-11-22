@@ -1,0 +1,32 @@
+#!/bin/bash
+
+#--------------------------------------- How to use it ------------------------------------------------------#
+# this script will write code for creating basic structure of any sequence item class in a specified file
+# it takes name of sequence class as te only argument 
+# example:
+#        ./create_seq_item trans > file_name(seq_item.sv)
+# Here, file_name indicates where the code will be written 
+#------------------------------------------------------------------------------------------------------------#
+
+
+sequence_item_class=${1:-default_seq_item};
+
+cat << _EOF_
+
+class $sequence_item_class extends uvm_sequence_item;
+
+
+	\`uvm_object_utils_begin($sequence_item_class)
+	\`uvm_object_utils_end
+
+
+	  function new(string name = "$sequence_item_class");
+	      super.new(name);
+	  endfunction : new
+
+
+endclass: $sequence_item_class
+
+_EOF_
+
+#-------------------------------------------------- THE END ---------------------------------------------------------#

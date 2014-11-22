@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<link type="text/css" rel="stylesheet" href="stylesheet.css"/>
+		<title>Create Environment</title>
+	</head>
+	<body>
+		<form action="/html/tags/html_form_tag_action.cfm" method="get">
+		<fieldset> 
+		<legend><h1> || Create Environment :: Input Options ||</h1></legend> 
+		
+		<div id="d1">
+			<h3>Add new Environment:</h3>
+			<p>Filename Prefix: <input type="text" name="filename_prefix" value=""  /></p>
+			<p>Test Filename: <input type="text" name="test_filename" value=""  /></p>
+			<p>Agent Type: 
+			<input type="radio" name="agent_type" value="Active" /> Active
+			<input type="radio" name="agent_type" value="Passive" /> Passive
+			</p>
+			<p><input type="button" value="Add New Environment"/></p>
+		</div>
+				
+		</fieldset> 
+		</form>
+		<p><input type="button" value="Back"/></p>
+	</body>
+	
+</html>

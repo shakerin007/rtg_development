@@ -1,0 +1,40 @@
+#!/bin/bash
+
+#--------------------------------------- How to use it ----------------------------------------------#
+# this script will take instance of a port inside agent class and build it in new() function
+# it takes four arguments 
+# arguments are: 
+# 1. name of agent file 
+# 2. name of agent port
+# 3. name of sequence_item class
+# 4. name of destination folder where agent file exists.
+# Example:
+#        ./create_agent_port agent.sv a_port trans destination_folder
+#----------------------------------------------------------------------------------------------------#
+
+agent_file=${1:-agent.sv};
+agent_port=${2:-a_port};
+sequence_item_class=${3:-trans};
+
+destination=${4:-mydir};
+
+
+new='function new';
+new_f='UVM_NEW';
+port="uvm_analysis_port#";
+
+
+#creating instance of a port inside agent class for connecting it with other components
+sed -i "s/.*$new.*/$port($sequence_item_class) $agent_port;\n&/" $destination/$agent_file
+
+#using new() function inside the new() function of the agent class to create agent_port
+sed -i "/$new_f/a $agent_port=new(\"$agent_port\",this) ;\n" $destination/$agent_file
+
+
+
+
+
+
+
+
+#-------------------------------------------------- THE END ---------------------------------------------------------#

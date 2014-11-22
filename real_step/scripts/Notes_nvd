@@ -1,0 +1,19 @@
+************
+FURTHER WORK
+************
+-------------------------------
+1. Adding a new base sequence. 
+-------------------------------
+
+Currently there is option for adding a sequence where new file is created and new sequence 
+is written it. The new sequence is extended from base sequence already existing in testbench.
+
+In some cases two (or more) base sequences are needed.
+There should be option of addng a new base sequence and further sequences can be added by
+extending that new+ base sequence.
+
+The new added base sequence should be instantiated in the v_sequence (in which the previous base sequence
+is already there).
+
+
+

@@ -1,0 +1,33 @@
+#!/bin/bash
+destination=$1;shift;
+filename=$1;
+sed -n -e  '/uvm_c/,$!p' $destination/$filename>$destination/temp1;
+sed -n -e '/_active_/,$!p' $destination/temp1 > $destination/temp;
+
+environment_class=$(grep "env" $destination/temp | cut -d ' ' -f 1) 
+virtual_sequence_class=$(grep "vsequence" $destination/temp | cut -d ' ' -f 1)
+
+environment_ins=$(grep "env" $destination/temp | cut -d ' ' -f 2) 
+virtual_sequence_ins=$(grep "vsequence" $destination/temp | cut -d ' ' -f 2)
+
+count=1;
+echo "************ virtual sequence class ************"
+while read line; do 
+echo  --- $count ------ "$line" -------;count=$(($count+1)); done <<< "$virtual_sequence_class" 
+
+count=1;
+echo "************ virtual sequence instance ************"
+while read line; do 
+echo  --- $count ------ "$line" -------;count=$(($count+1)); done <<< "$virtual_sequence_ins" 
+
+count=1;
+echo "************ environment class ***************"
+while read line; do 
+echo  --- $count ------ "$line" -------;count=$(($count+1)); done <<< "$environment_class" 
+
+count=1;
+echo "************ environment instance ************"
+while read line; do 
+echo  --- $count ------ "$line" -------;count=$(($count+1)); done <<< "$environment_ins" 
+
+

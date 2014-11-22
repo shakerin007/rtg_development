@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<link type="text/css" rel="stylesheet" href="stylesheet.css"/>
+		<title>Create Monitor</title>
+	</head>
+	<body>
+		<form action="/html/tags/html_form_tag_action.cfm" method="get">
+		<fieldset> 
+		<legend><h1>|| Create Monitor :: Input Options ||</h1></legend> 
+		
+		<div id="d1">
+			<h3>Add Monitor:</h3>
+			<p>Monitor Class Prefix: <input type="text" name="monitor_prefix" value=""  /></p>
+			<p>Agent Filename: <input type="text" name="agent_filename" value=""  /></p>
+			<p>Monitor Type: 
+			<input type="radio" name="monitor_type" value="Active" /> Active
+			<input type="radio" name="monitor_type" value="Passive" /> Passive
+			</p>
+			<p><input type="button" value="Add Monitor"/></p>
+		</div>
+				
+		</fieldset> 
+		</form>
+		<p><input type="button" value="Back"/></p>
+	</body>
+	
+</html>
