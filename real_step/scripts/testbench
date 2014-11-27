@@ -30,5 +30,5 @@ mkdir $destination
 ../scripts/create_test_base $test_name > $destination/$base_test_file
 ../scripts/env_generate $common $base_test_file $destination $active $mon_active   
 
-echo "Connect Interface using ./connect_interface and ./import_interface"  
+#echo "Connect Interface using ./connect_interface and ./import_interface"  
 
