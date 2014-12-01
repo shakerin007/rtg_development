@@ -1,0 +1,27 @@
+#!/bin/bash
+
+#--------------------------------------- How to use it ------------------------------------------------------#
+# this script will create a sequencer and connect it with driver inside an agent
+# this script is written only for using from other scripts
+# it should not be used from terminal 
+#------------------------------------------------------------------------------------------------------------#
+
+sequencer_class=${1:-default_sequencer};
+sequencer_ins=${2:-sequencer};
+virtual_sequencer_file=${3:-default_vsequencer.sv};
+virtual_sequencer_class=${4:-default_vsequencer};
+driver_ins=${5:-default_driver};
+agent_file=${6:-default_agent.sv};
+agent_class=${7:-default_agent};
+agent_ins=${8:-agent_ins};
+
+active=${9:-ACTIVE};
+shift;
+sequencer_file=${9:-sequencer.sv}
+shift;
+env_file=${9:-env.sv};
+shift;
+destination=${9:-mydir};
+
+../scripts/create_sequencer $sequencer_class $sequencer_ins $active $agent_file $agent_ins $virtual_sequencer_file $virtual_sequencer_class $env_file $destination> $destination/$sequencer_file 
+../scripts/connect_sequencer $agent_file $driver_ins $sequencer_ins $active $destination

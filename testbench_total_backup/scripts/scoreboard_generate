@@ -1,0 +1,33 @@
+#!/bin/bash
+
+
+#--------------------------------------- How to use it ------------------------------------------------------#
+# this script will create a scoreboard and connect it with environment
+# this script is written for using from terminal
+# it can be used like any other script
+#  ./script_name arg1 arg2 arg3 . . .
+#------------------------------------------------------------------------------------------------------------#
+
+common=${1:-auto};
+env_file=${2:-env.sv}
+active=${3:-ACTIVE};
+destination=${4:-mydir};
+
+
+
+
+scoreboard_file="$common""_scb.sv"
+scoreboard_class="$common""_scb"
+scoreboard_ins="$common""_scb_ins"
+scb_pkt="$common""_sent_pkt"
+scoreboard_port="$common""_scb_port"
+agent_ins="$common""_agent_ins"
+monitor_ins="$common""_monitor"
+mon_port="$common""_mon_port"
+sequence_item_class="$common""_trans"
+sequence_item_ins="$common""_trans_ins"
+
+
+./create_scb $scoreboard_class $scoreboard_ins $active $env_file $destination> $destination/$scoreboard_file
+./create_scb_port $scoreboard_file $scoreboard_class $scb_pkt $sequence_item_class $sequence_item_ins $destination
+./create_agent_scb $env_file $agent_ins $monitor_ins $mon_port $scoreboard_ins $scoreboard_port $active $destination

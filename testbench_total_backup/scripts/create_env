@@ -1,0 +1,130 @@
+#!/bin/bash
+
+#--------------------------------------- How to use it ------------------------------------------------------#
+# this script will do few things
+# 1. take instance of environment class inside base test class
+# 2. build that instance inside the build_phase of base test class
+# 3. create an environment class
+# it takes five arguments 
+# arguments are: 
+# 1. name of environment class 
+# 2. name of environment instance that will be created inside base test class
+# 3. name of base test file
+# 4. no need : ACTIVE
+# 5. destination folder name 
+# Example:
+#        ./create_env env env_ins base_test.sv ACTIVE destination_folder > destination_folder/file_name
+# here, file_name indicates where the code of environment class wil be written
+#------------------------------------------------------------------------------------------------------------#
+
+
+env_class=${1:-default_env};
+env_ins=${2:-env_ins};
+base_test_file=${3:-test_base.sv};
+active=${4:-ACTIVE};
+shift;
+destination=${4:-mydir};
+
+
+new_f='UVM_NEW';
+build='UVM_'$active'_BUILD';
+connect='UVM_'$active'_CONNECT';
+
+
+
+sed -i "/uvm_test/a $env_class $env_ins ;" $destination/$base_test_file
+sed -i "/$build/a $env_ins=$env_class::type_id::create(\"$env_ins\",this);" $destination/$base_test_file
+
+
+
+
+cat << _EOF_
+
+class $env_class extends uvm_env;
+	
+	\`uvm_component_utils_begin($env_class)
+	\`uvm_component_utils_end
+
+
+
+
+	function new(string name, uvm_component parent);
+		super.new(name, parent);
+		\`uvm_info(get_full_name(), "In  UVM_ACTIVE_NEW", UVM_LOW);
+	endfunction : new
+
+
+
+
+	virtual function void build_phase(uvm_phase phase);
+		super.build_phase(phase);
+		\`uvm_info(get_full_name(), "In  UVM_ACTIVE_BUILD", UVM_LOW);
+		\`uvm_info(get_full_name(), "In  UVM_PASSIVE_BUILD", UVM_LOW);
+	endfunction : build_phase
+	
+
+
+
+	virtual function void connect_phase(uvm_phase phase);
+		super.connect_phase(phase);
+		\`uvm_info(get_full_name(), "In  UVM_ACTIVE_CONNECT", UVM_LOW);	
+		\`uvm_info(get_full_name(), "In  UVM_PASSIVE_CONNECT", UVM_LOW);
+	endfunction : connect_phase
+	
+
+
+	virtual task run_phase(uvm_phase phase);
+	      super.run_phase(phase);
+	      \`uvm_info(get_full_name(), "In  UVM_ACTIVE_RUN", UVM_LOW);
+	      \`uvm_info(get_full_name(), "In  UVM_PASSIVE_RUN", UVM_LOW);
+	      factory.print();
+	endtask: run_phase
+	
+
+
+
+
+
+
+	  function void report();
+
+	      uvm_report_server reportServer = uvm_report_server::get_server();
+
+	      \$display("");
+	      \$display("---Test Summary---");
+	      \$display("");
+
+	      \$display("");
+	      report_header();
+	      report_summarize();
+	      \$display("");
+
+	      \$display("---Final Test Status---");
+	      assert(reportServer.get_severity_count(UVM_FATAL) == 0 && reportServer.get_severity_count(UVM_ERROR) == 0) begin
+	      \$display("");
+	      \$display("***PASSED***");
+	      \$display("");
+	      end
+	      else begin
+	      \$display("");
+	      \$error("***FAILED***");
+	      \$display("");
+	      end
+	 
+
+	  endfunction
+
+
+endclass : $env_class
+
+
+
+
+
+_EOF_
+
+
+
+
+
+#-------------------------------------------------- THE END ---------------------------------------------------------#

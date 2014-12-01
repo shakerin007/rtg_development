@@ -1,0 +1,20 @@
+#!/bin/bash
+
+
+
+
+
+interface_file=${1:-intf.sv}
+modport_name=${2:-master}
+interface_name=${3:-intf} 
+env_class=${4:-env}
+agent_class=${5:-agent}
+file=${6:-top.sv}
+
+destination=${7:-mydir};
+
+sed -i "s/.*endinterface.*/modport $modport_name();\n&/" $destination/$interface_file
+./connect_interface $interface_name.$modport_name $interface_name $env_class $agent_class $file $destination  
+
+
+#-------------------------------------------------- THE END ---------------------------------------------------------#

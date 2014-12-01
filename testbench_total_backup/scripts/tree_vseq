@@ -1,0 +1,18 @@
+#!/bin/bash
+destination=$1;shift;
+filename=$1;
+sed -n -e  '/function/,$!p' $destination/$filename>$destination/temp1;
+
+sequence_class=$(grep "sequence" $destination/temp | cut -d ' ' -f 1) 
+
+sequence_ins=$(grep "sequence" $destination/temp | cut -d ' ' -f 2) 
+
+count=1;
+echo "************ sequence class ************"
+while read line; do 
+echo  --- $count ------ "$line" -------;count=$(($count+1)); done <<< "$sequence_class" 
+
+count=1;
+echo "************ sequence instance ************"
+while read line; do 
+echo  --- $count ------ "$line" -------;count=$(($count+1)); done <<< "$sequence_ins" 

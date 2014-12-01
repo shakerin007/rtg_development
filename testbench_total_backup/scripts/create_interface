@@ -1,0 +1,29 @@
+#!/bin/bash
+
+#--------------------------------------- How to use it ------------------------------------------------------#
+# this script will create an interface file
+# it takes two arguments 
+# arguments are: 
+# 1. name of interface class 
+# 2. value of time scale
+# Example:
+#        ./create_interface intf "10ns/10ps" > destination_folder/file_name
+# here, file_name indicates where the code of interface class wil be written
+#------------------------------------------------------------------------------------------------------------#
+interface_class=${1:-default_interface}
+time_scale=${2:-1ns/1ps}
+
+cat << _EOF_
+\`timescale $time_scale
+
+interface $interface_class;
+
+endinterface
+
+_EOF_
+
+
+
+
+
+#-------------------------------------------------- THE END ---------------------------------------------------------#

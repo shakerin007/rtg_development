@@ -1,0 +1,48 @@
+<!-- done variables --> 
+<!-- checked -->
+<html>
+	<head >
+		<title>Testbench Edit</title>
+		<link rel="stylesheet" type="text/css" href="index.css" >	
+	</head>
+	<body>
+		<header>
+			
+			<nav>
+				<h2>RTG</h2>
+				<ul>
+					<li><a href="#">myProfile</a></li>
+					<li><a href="#">myTestbenches</a></li>
+					<li><a href="#">logout</a></li>
+
+				</ul>
+			</nav>
+		</header>
+		<form>
+			<fieldset class="Tb_info"> 
+				<legend class="top_header">New Scoreboard Information</legend>
+				<p>
+					<em>Testbench Name:</em>
+					<br> 
+					<input type="inbox" name="tb_name" placeholder="Testbench Name" readonly >
+				</p>
+				<p>
+					<em>Environment File Name:</em>
+					<br> 
+					<input type="inbox" name="env_file_name" placeholder="auto_env.sv" readonly>
+				</p>
+
+				<p>
+					<em>Prefix for New Scoreboard Files:</em>
+					<br> 
+					<input type="inbox" name="scb_prefix" placeholder="new_auto">
+				</p>							
+	
+
+				<p>
+					<input type="submit" name="create_scb_new" value="Create New Scoreboard Files" >
+				</p>
+			</fieldset>
+		</form>
+	</body>
+</html>

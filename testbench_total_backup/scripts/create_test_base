@@ -1,0 +1,51 @@
+#!/bin/bash
+
+
+#--------------------------------------- How to use it ------------------------------------------------------#
+# this script will create a new test case class inside specified file
+# it takes name of test case as the only argument
+# example:
+#        ./create_test_base new_test > file_name(test.sv) 
+# file_name is name of the file where code will be written
+#------------------------------------------------------------------------------------------------------------#
+
+test_case=${1:-default_test};
+
+cat << _EOF_
+class $test_case extends uvm_test;
+
+       \`uvm_component_utils($test_case)
+    
+
+    	function new(string name, uvm_component parent=null);
+		super.new(name, parent);
+		\`uvm_info(get_full_name(), "In  UVM_ACTIVE_NEW", UVM_LOW);
+	endfunction : new
+
+
+	virtual function void build_phase(uvm_phase phase);
+		super.build_phase(phase);
+		  \`uvm_info(get_full_name(), "In  UVM_ACTIVE_BUILD", UVM_LOW);
+	endfunction : build_phase
+    
+
+	virtual task run_phase(uvm_phase phase);
+		super.run_phase(phase);
+		phase.raise_objection(this, "Objection raise");
+		  \`uvm_info(get_full_name(), "In  UVM_ACTIVE_RUN", UVM_LOW);
+		phase.drop_objection(this, "Objection_drop");
+	endtask : run_phase
+
+
+
+
+endclass : $test_case
+
+_EOF_
+
+#-------------------------------------------------- THE END ---------------------------------------------------------#
+
+
+
+
+

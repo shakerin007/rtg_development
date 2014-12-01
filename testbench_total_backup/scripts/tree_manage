@@ -1,0 +1,28 @@
+#!/bin/bash
+destination=$1;
+echo "--------------------- Mission Started--------------------"
+ls -1 $destination >filelist;
+
+test_file=$(grep "test" filelist)
+while read line;do 
+echo "%%%%%%%%%%%%%%%%%% File Name : $line %%%%%%%%%%%%%%%%%%%%%%%"
+./tree_test $destination $line ; done <<< "$test_file" 
+echo "--------------------- Completed 25% --------------------"
+
+environment=$(grep "env" filelist)
+while read line; do
+echo "%%%%%%%%%%%%%%%%%% File Name : $line %%%%%%%%%%%%%%%%%%%%%%%"
+./tree_env $destination $line; done <<< "$environment" 
+echo "--------------------- Completed 50%--------------------"
+
+virtual_sequence=$(grep "vsequence" filelist)
+while read line; do
+echo "%%%%%%%%%%%%%%%%%% File Name : $line %%%%%%%%%%%%%%%%%%%%%%%"
+./tree_vseq $destination $line; done <<< "$virtual_sequence" 
+
+echo "--------------------- Completed 75% --------------------"
+agent=$(grep "agent" filelist)
+while read line;do 
+echo "%%%%%%%%%%%%%%%%%% File Name : $line %%%%%%%%%%%%%%%%%%%%%%%"
+./tree_agent $destination $line; done <<< "$agent" 
+echo "--------------------- Mission Accomplished--------------------"

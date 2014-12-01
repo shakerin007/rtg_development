@@ -1,0 +1,49 @@
+#!/bin/bash
+
+#--------------------------------------- How to use it ------------------------------------------------------#
+# this script will do few things
+# 1. it takes instance of sequence item class inside scoreboard class
+# 2. it takes instance of analysis port inside scoreboard class
+# 3. it creates instance of analysis port inside new() function of scoreboard class
+# 4. it creates write function associated with each scoreboard analysis port
+# it takes some arguments 
+# arguments are:
+# 1. name of the scoreboard file
+# 2. name of scoreboard class
+# 3. scoreboard port name that has to vbe created
+# 4. sequence item class that is associated with this port
+# 5. instance of the sequence item class
+# 6. destination where the scoreboard file is located
+# example:
+#        ./create_scb_port scb.sv scb a_port_scb trans trans_ins destination_folder
+#------------------------------------------------------------------------------------------------------------#
+
+scoreboard_file=${1:-scb.sv}
+scoreboard_class=${2:-scb}
+scb_port=${3:-sent_pkt}
+sequence_item_class=${4:-trans}
+sequence_item_ins=${5:-trans_ins}
+shift;
+destination=${5:-mydir};
+
+new="function new";
+new_f='UVM_NEW';
+
+
+sed -i "s/.*class .*/$sequence_item_class $sequence_item_ins;\n&/" $destination/$scoreboard_file
+
+sed -i "s/.*class .*/\`uvm_analysis_imp_decl(_$scb_port)\n&/" $destination/$scoreboard_file
+
+sed -i "s/.*$new.*/uvm_analysis_imp_$scb_port#(,$scoreboard_class) port_$scb_port;\n&/" $destination/$scoreboard_file
+
+sed -i "/$new_f/a $scb_port=new(\"$scb_port\",this);" $destination/$scoreboard_file
+
+
+sed -i "s/.*endclass.*/virtual function void write_$scb_port( pkt);\nendfunction: write_$scb_port\n&/" $destination/$scoreboard_file
+
+
+
+
+
+
+#-------------------------------------------------- THE END ---------------------------------------------------------#

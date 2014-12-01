@@ -1,0 +1,40 @@
+#!/bin/bash
+
+#--------------------------------------- How to use it ----------------------------------------------#
+# this script will set an interface inside top level file
+# it takes six arguments 
+# arguments are: 
+# 1. name of interface along with modport name 
+# 2. name of interface class
+# 3. name of environment class
+# 4. name of agent class
+# 5. top level file name
+# 6. name of destination folder 
+# Example:
+#        ./connect_interface intf.Master intf env agent top.sv destination_folder                                
+#----------------------------------------------------------------------------------------------------#
+
+
+interface_with_modport=${1:-intf}
+interface_name=${2:-intf}
+env_class=${3:-env}
+agent_class=${4:-agent}
+file=${5:-top.sv}
+
+destination=${6:-mydir};
+
+run="UVM_ACTIVE_RUN"
+
+if grep "$interface_name " $destination/$file 
+then
+sed -i "/\<$run\>/a uvm_config_db#(virtual $interface_with_modport)::set(null,\"\*.$env_class.$agent_class*\",\"$interface_name\",$interface_name); \n" $destination/$file
+else 
+sed -i "/\<module\>/a $interface_name $interface_name();" $destination/$file
+sed -i "/\<$run\>/a uvm_config_db#(virtual $interface_with_modport)::set(null,\"\*.$env_class.$agent_class*\",\"$interface_name\",$interface_name); \n" $destination/$file
+fi
+
+
+
+
+
+#-------------------------------------------------- THE END ------------------------------------------#
