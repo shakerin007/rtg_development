@@ -1,0 +1,38 @@
+#!/bin/bash
+
+
+#--------------------------------------- How to use it ------------------------------------------------------#
+# this script will create an extended sequence class from base sequence class
+# this script is written for using from terminal
+# it can be used like any other script
+#  ./script_name arg1 arg2 arg3 . . .
+#------------------------------------------------------------------------------------------------------------#
+
+
+base_sequence=${1:-base_sequence}
+sequence_class=${2:-sequence}
+sequencer_class=${3:-sequencer}
+sequence_item_class=${4:-trans}
+sequence_item_ins="$sequence_item_class""_ins"
+
+
+cat << _EOF_
+class $sequence_class extends $base_sequence;
+
+	\`uvm_object_utils($sequence_class)
+	\`uvm_declare_p_sequencer($sequencer_class)
+$sequence_item_class $sequence_item_ins;
+
+	function new(string name = "$sequence_class");
+		super.new(name);
+	endfunction : new
+
+
+
+	virtual task body();
+	
+	endtask : body	
+
+endclass : $sequence_class
+
+_EOF_

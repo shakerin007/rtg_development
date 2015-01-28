@@ -1,0 +1,69 @@
+#!/bin/bash
+command=$1;shift;
+variable1=$1;shift;
+variable2=$1;shift;
+variable3=$1;shift;
+variable4=$1;shift;
+cd scripts/
+export DIR=`pwd`;
+DES="new/"
+whole_tb="create whole testbench";
+new_env="create new environment class";
+add_env="add new environment instance";
+new_scb="create new scoreboard class";
+add_scb="add new scoreboard instance";
+new_sub="create new subscriber class";
+add_sub="add new subscriber instance";
+new_agent="create new agent class";
+add_agent="add new agent instance";
+new_drv="create new driver class";
+add_drv="add new driver instance";
+new_mon="create new monitor class";
+add_mon="add new monitor instance";
+new_sqr="create new sequencer class";
+add_sqr="add new sequencer instance";
+add_seq="create new sequence class";
+new_seq="create new base sequence";
+new_test="create new test";
+case "$command" in
+    1) 
+        ./rtg tb $variable1 $variable2  $DES $variable3 $variable4
+    ;;
+    2) ./rtg env $variable1 $variable2 $DES
+    ;;
+    3) ./rtg env_i $variable1 $variable2 $variable3 $DES
+    ;;
+    4) ./rtg scb $variable1 $variable2 $variable3 $DES
+    ;;
+    5) ./rtg scb_i $variable1 $variable2 ACTIVE $variable3 $DES
+    ;;
+    6) ./rtg sbr $variable1 $variable2 ACTIVE $variable3 $DES
+    ;;
+    7) ./rtg sbr_i $variable1 $variable2 ACTIVE $variable3 $DES
+    ;;
+    8) ./rtg agent $variable1 $variable2 ACTIVE $DES
+    ;;
+    9) ./rtg agent_i $variable1 $variable2 ACTIVE $variable3 $DES
+    ;;
+    10) ./rtg drv $variable1 $variable2 $DES
+    ;;
+    11) ./rtg drv_i $variable1 $variable2 $variable3 $DES
+    ;;
+    12) ./rtg mon $variable1 $variable2 PASSIVE $DES
+    ;;
+    13) ./rtg mon_i $variable1 $variable2 $variable3 $DES
+    ;;
+    14) ./rtg sqr $variable1 $variable2 $variable3 $DES
+    ;;
+    15) ./rtg sqr_i $variable1 $variabel2 $variable3 $DES $variable4
+    ;;
+    16) ./rtg a_seq $variable1 $variable2 $variable3 $variable4 $DES
+    ;;
+    17) ./rtg n_seq $variable1 $variable2 $variable3 $DES $variable4
+    ;;
+    18) ./rtg test $variable1 $variable2 $variable3 $variable4 $DES
+    ;;
+    *) echo  "$command"
+    ;;
+
+esac

@@ -1,4 +1,6 @@
 #!/bin/bash
+username=$1;shift;
+tb_id=$1;shift;
 command=$1;shift;
 variable1=$1;shift;
 variable2=$1;shift;
@@ -6,7 +8,8 @@ variable3=$1;shift;
 variable4=$1;shift;
 cd scripts/
 export DIR=`pwd`;
-DES="new/"
+mkdir ../$username;
+DES="../$username/$tb_id";
 whole_tb="create whole testbench";
 new_env="create new environment class";
 add_env="add new environment instance";

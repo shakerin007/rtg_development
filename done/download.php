@@ -13,6 +13,7 @@
 	$db_name="rtg_test_1_db";
 	$host="angryanon-rtg_development_git-1070192";
 	$port=3306;
+	$username=$_SESSION['username'];
 	mysql_connect($host,$db_username,"")or die(mysql_error());
     mysql_select_db($db_name) or die ("Could not get Information from Server");
 	$sql = "SELECT `tb_info`.`cmd`, `cmd_list`.`type`, `tb_info`.`argument1`, `tb_info`.`argument2`, `tb_info`.`argument3`, `tb_info`.`argument4`\n"
@@ -41,11 +42,13 @@
 		array_push($variable_04,$row['argument4']);
 	} 		
     for($cmd_count=0;$cmd_count<sizeof($sequencial_command);$cmd_count++){
-       shell_exec("./rtg_run $sequencial_command_id[$cmd_count] $variable_01[$cmd_count] $variable_02[$cmd_count] $variable_03[$cmd_count] $variable_04[$cmd_count]");
-       shell_exec("./make_zip tb_files");
+       shell_exec("./rtg_run $username $tb_id $sequencial_command_id[$cmd_count] $variable_01[$cmd_count] $variable_02[$cmd_count] $variable_03[$cmd_count] $variable_04[$cmd_count]");
+       shell_exec("./make_zip $username $tb_id");
+      
        
     }
-    echo "<a href = './tb_files.zip' >Files are Ready</br> </a>";
+    echo "<a href = './$username/$tb_id.zip' >Files are Ready</br> </a>";
     echo "<a href='save_info.php'>Show List of Testbenches</a>"; 
     echo "<a href='logout.php'>Log Out</a>"; 
+    
 ?>

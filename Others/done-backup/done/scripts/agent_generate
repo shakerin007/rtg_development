@@ -1,0 +1,76 @@
+#!/bin/bash
+
+#--------------------------------------- How to use it ----------------------------------------------#
+# this script will do few things.
+# 1. it will create an agent class and ports inside agent class for external connections
+# 2. connect this agent class inside environment
+# 3. it will create driver, sequencer and monitor classes and connect them with agent class 
+# 4. sequence item and sequence classes will also be created  
+# 5. destination for creating all files has to be given.
+# 6. in total, this script needs five arguments forexecuting all commands properly
+# arguments are: 
+# 1. A common prefix for all created classes
+# 2. Environment file name where this agent has to be connected
+# 3. State of the agent(avtive or passive)
+# 4. Destination for creating these files
+# 5. Prefix of the environment class where this agent has to be connected.
+# Example:
+#        ./agent_generate pre_agent env.sv ACTIVE destination_folder pre_env  
+#----------------------------------------------------------------------------------------------------#
+
+
+
+common=${1:-auto};
+env_file=${2:-env.sv}
+active=${3:-ACTIVE};
+destination=${4:-mydir};
+env_pre=${5:-auto};
+
+mon_active=$active;
+
+agent_file="$common""_agent.sv"
+agent_class="$common""_agent"
+agent_ins="$common""_agent_ins"
+driver_file="$common""_driver.sv"
+driver_class="$common""_driver"
+driver_ins="$common""_driver"
+monitor_file="$common""_monitor.sv"
+monitor_class="$common""_monitor"
+monitor_ins="$common""_monitor"
+agent_port="$common""_a_port"
+mon_port="$common""_mon_port"
+sequencer_file="$common""_sequencer.sv"
+sequencer_class="$common""_sequencer"
+sequencer_ins="$common""_sequencer"
+sequence_file="$common""_sequence.sv"
+sequence_class="$common""_sequence"
+sequence_ins="$common""_sequence_ins"
+sequence_item_file="$common""_sequence_item.sv"
+sequence_item_class="$common""_trans"
+sequence_item_ins="$common""_trans_ins"
+
+virtual_sequencer_file="$env_pre""_vsequencer.sv"
+virtual_sequencer_class="$env_pre""_vsequencer"
+virtual_sequence_file="$env_pre""_vsequence.sv"
+virtual_sequence_class="$env_pre""_vsequence"
+
+
+
+
+
+
+
+$DIR/create_agent $agent_class $agent_ins $active $env_file $destination> $destination/$agent_file 
+$DIR/create_agent_port $agent_file $agent_port $sequence_item_class $destination 
+$DIR/create_driver $driver_class $driver_ins $sequence_item_class $sequence_item_ins $active $agent_file $destination> $destination/$driver_file 
+$DIR/do_sequencer $sequencer_class $sequencer_ins $virtual_sequencer_file $virtual_sequencer_class $driver_ins $agent_file $agent_class $agent_ins $active $sequencer_file $env_file $destination 
+$DIR/create_sequence $sequence_class $sequence_ins $sequencer_class $sequencer_ins $sequence_item_class $sequence_item_ins $virtual_sequence_file $destination> $destination/$sequence_file
+$DIR/create_seq_item $sequence_item_class > $destination/$sequence_item_file
+$DIR/do_monitor $monitor_class $monitor_ins $sequence_item_class $sequence_item_ins $agent_port $mon_port $mon_active $agent_file $monitor_file $destination 
+
+
+
+
+
+
+#-------------------------------------------------- THE END ------------------------------------------#

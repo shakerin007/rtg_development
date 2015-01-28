@@ -1,0 +1,166 @@
+#!/bin/bash
+
+cat << _EOF_
+----------------------------------------------------------------------------
+----------------------------- About the Script -----------------------------
+----------------------------------------------------------------------------
+----------> This script is written for developing the structure
+----------> of UVM testbench in a faster way and less effort.
+----------> It can be used to develop testbench from scratch.
+----------> It can also be used for editing an existing testbench.
+----------------------------------------------------------------------------
+
+
+
+
+----------------------------------------------------------------------------
+----------------------- Features of the Script -----------------------------
+----------------------------------------------------------------------------
+----------> Develop testbench from scratch 
+----------> Develop Environment and connect it to existing testbench.
+----------> Develop Agent and connect it in existing environment.
+----------> Develop individual components such as Scoreboard, Subscriber.
+----------> Connect individually created components automatically.
+----------> Create Interface for controlling signals.
+----------> Connect interface throughout the testbench automatically.
+----------> Create Monitor, Sequencer, Driver, Subscriber, Scoreboard etc. individually. 
+----------> Create testcases according to need and connect them using script automatically.	
+----------> Create new sequences and connect them to appropriate testcases. 
+----------> User can use this script according to own need.
+----------------------------------------------------------------------------
+
+
+
+----------------------------------------------------------------------------
+------------------------- How to use the Script ----------------------------
+----------------------------------------------------------------------------
+----------> Develop testbench from scratch
+---------->------------------------------
+----------> use ./testbench to create whole testbench structure. 
+----------> Edit generated interface file according to your need.
+----------> Set interface from the top level file using ./connect_interface.
+----------> Connect interface whereever needed using ./import_interface.  
+----------------------------------------------------------------------------
+
+
+
+
+----------------------------------------------------------------------------
+-------------Develop Environment and connect it to existing testbench-------
+----------------------------------------------------------------------------
+----------> Environment can be created in two ways.
+----------> use ./env_generate to generate Environment.  
+----------> test file should be created before creating the environment.
+----------> Environment will be included inside the base_test_file automatically.
+----------------------------------------------------------------------------
+
+
+
+----------------------------------------------------------------------------
+-----------Develop Agent and connect it in existing environment-------------
+----------------------------------------------------------------------------
+----------> use ./do_agent to create a single Agent.
+----------> provide necessary information related to the environment.
+----------> Agent will be connected automatically with the environment.
+----------------------------------------------------------------------------
+
+
+
+----------------------------------------------------------------------------
+-----------Develop Other components such as Scoreboard, Subscriber---------- 
+----------------------------------------------------------------------------
+----------> use ./do_scoreboard to create and connect scoreboard to appropriate agent.
+----------> use ./do_subscriber to create and connect subscriber to appropriate agent.
+----------------------------------------------------------------------------
+
+
+
+
+----------------------------------------------------------------------------
+-----------Connect individually created components easily-------------------
+----------------------------------------------------------------------------
+----------> When monitor, sequencer ,driver etc. are created individually connections have to made 
+----------> using following scripts:
+----------> use ./connect_agent_mon to connect a monitor with an agent.
+----------> use ./connect_sequencer for connecting sequencer with agent.  
+----------> use ./connect_agent_sub for connecting subscriber with the agent.
+----------> use ./create_agent_scb for connectiong scoreboard with agent.     
+----------------------------------------------------------------------------
+
+
+
+
+
+----------------------------------------------------------------------------
+------------Create Interface for controlling signals------------------------
+----------------------------------------------------------------------------
+----------> use ./create_interface to create basic structure of an interface. 
+----------> interface signals should be added manually.
+----------------------------------------------------------------------------
+
+
+
+
+
+----------------------------------------------------------------------------
+-----------Connect interface throughout the testbench automatically---------
+----------------------------------------------------------------------------
+----------> use ./connect_interface to set interface from the top.
+----------> Name of the interface along with modport has to be provided.
+----------> This script will use uvm_config_db to set the interface.
+----------> use ./import_interface to connect the interface in other 
+----------> components in the testbench.
+----------> Interface can be sent to any component using this script
+----------------------------------------------------------------------------
+
+
+
+
+
+--------------------------------------------------------------------------------------------
+-----------Create Monitor, Sequencer, Driver, Subscriber, Scoreboard individually-----------
+--------------------------------------------------------------------------------------------
+----------> use ./create_monitor to create a monitor under a certain agent.
+----------> use ./create_sequencer to create a sequencer under a certain agent.
+----------> use ./create_driver to create a driver under a certain agent.
+----------> use ./create_agent to create an agent under a certain environment.
+----------> use ./create_subscriber to create a subscriber under a certain environment.
+----------> use ./create_scoreboard to create a scoreboard under a certain environment.
+----------> use ./create_env to create an environment under a certain test_base.
+----------> All the above script will create only the individual files.
+----------> The connections between different components of the testbench should be made
+----------> using connection scripts.
+--------------------------------------------------------------------------------------------
+
+
+
+
+
+
+--------------------------------------------------------------------------------------------
+-----------Create testcases according to need and connect them using script automatically---
+--------------------------------------------------------------------------------------------
+----------> The test_base for a testbench can be created using ./create_test_base script.
+----------> After creation of a basic testbench, new tests can be created and connected very easily. 
+----------> use ./add_test to create a new test case for the testbench.
+----------> old sequence or the basic sequence will be overridden in this newly created test class.
+--------------------------------------------------------------------------------------------
+
+
+
+
+------------------------------------------------------------------------------
+-----------Create new sequences and connect them to appropriate testcases-----
+------------------------------------------------------------------------------
+----------> use ./seq_override to create new sequence extended from base sequence.
+----------> this will create the structure of the sequence.
+------------------------------------------------------------------------------
+
+
+------------------------------------------------------------------------------
+-------------------------------  THE END  ------------------------------------
+------------------------------------------------------------------------------
+
+
+
+_EOF_

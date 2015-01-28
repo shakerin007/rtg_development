@@ -1,0 +1,20 @@
+#!/bin/bash
+
+
+
+#--------------------------------------- How to use it ------------------------------------------------------#
+# this script will create a new testcase connected with a new sequence
+# this script is written for using from terminal
+# it can be used like any other script
+#  ./script_name arg1 arg2 arg3 . . .
+#------------------------------------------------------------------------------------------------------------#
+
+new_test_file=${1:-new_test.sv}
+new_test_name=${2:-test_case}
+old_sequence_class=${3:-old_seq};
+new_sequence_class=${4:-new_seq};
+env_class=${5:-auto_env};
+vsequence=${6:-auto_vsequence};
+destination=${7:-mydir};
+
+$DIR/add_test $new_test_name $old_sequence_class $new_sequence_class $env_class $vsequence> $destination/$new_test_file 

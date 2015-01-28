@@ -1,0 +1,22 @@
+#!/bin/bash
+
+agent_class=${1:-default_agent};
+agent_ins=${2:-default_agent_ins};
+active=${3:-ACTIVE};
+new_f='UVM_NEW';
+build='UVM_'$active'_BUILD';
+connect='UVM_'$active'_CONNECT';
+env_file=${4:-default_env.sv};
+
+destination=${5:-mydir};
+
+# Make instance of the created agent inside the given environment class
+sed -i "/uvm_env/a $agent_class $agent_ins ;" $destination/$env_file
+
+# Create instance of the agent class inside build_phase of environment class and
+# set the is_active variable after creating agent instance
+sed -i "/$build/a $agent_ins=$agent_class::type_id::create(\"$agent_ins\",this);\n$agent_ins.is_active=UVM_$active;" $destination/$env_file
+
+# declaring if-else loop inside the connect phase of environment class
+sed -i "/$connect/a if($agent_ins.is_active == UVM_ACTIVE)begin\n\`uvm_info(get_full_name(), \"In connect : UVM_ACTIVE_$agent_ins\", UVM_LOW);\n	end\nelse if($agent_ins.is_active == UVM_PASSIVE)begin\n\`uvm_info(get_full_name(), \"In connect : UVM_PASSIVE_$agent_ins\", UVM_LOW);\nend" $destination/$env_file
+

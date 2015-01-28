@@ -1,0 +1,24 @@
+#!/bin/bash
+
+
+#--------------------------------------- How to use it ------------------------------------------------------#
+# this script will create a monitor and connect it with an agent
+# this script is written only for using from other scripts
+# it should not be used from terminal 
+#------------------------------------------------------------------------------------------------------------#
+
+monitor_class=${1:-default_monitor};
+monitor_ins=${2:-monitor};
+sequence_item_class=${3:-trans};
+sequence_item_ins=${4:-trans_ins};
+agent_port=${5:-a_port};
+mon_port=${6:-mon_port};
+active=${7:-ACTIVE};
+agent_file=${8:-agent.sv};
+monitor_file=${9:-monitor.sv}
+shift;
+destination=${9:-mydir};
+
+
+$DIR/create_monitor $monitor_class $monitor_ins $sequence_item_class $sequence_item_ins $active $agent_file $destination> $destination/$monitor_file  
+$DIR/connect_agent_mon $agent_file $agent_port $monitor_ins $mon_port $active $destination 

@@ -1,0 +1,40 @@
+#!/bin/bash
+
+#--------------------------------------- How to use it ----------------------------------------------#
+# this script will set an interface inside top level file
+# it takes six arguments 
+# arguments are: 
+# 1. name of interface along with modport name 
+# 2. name of interface class
+# 3. name of environment class
+# 4. name of agent class
+# 5. top level file name
+# 6. name of destination folder 
+# Example:
+#        ./connect_interface intf.Master intf env agent top.sv destination_folder                                
+#----------------------------------------------------------------------------------------------------#
+
+
+interface_with_modport=${1:-intf}
+interface_name=${2:-intf}
+env_class_ins=${3:-env}
+agent_class_ins=${4:-agent}
+file=${5:-top.sv}
+
+destination=${6:-mydir};
+
+run="run_test"
+
+if grep "$interface_name " $destination/$file 
+then
+sed -i '/run_test()/i \ uvm_config_db#(virtual '$interface_with_modport')::set(null,\"\*.'$env_class_ins'.'$agent_class_ins'*\",\"'$interface_name'\",'$interface_name');' $destination/$file
+else 
+sed -i '/module /a \ '$interface_name' '$interface_name'();' $destination/$file
+sed -i '/run_test()/i \ uvm_config_db#(virtual '$interface_with_modport')::set(null,\"\*.'$env_class_ins'.'$agent_class_ins'*\",\"'$interface_name'\",'$interface_name');' $destination/$file
+fi
+
+#sed -i "s/.*class .*/\`uvm_analysis_imp_decl(_sent_pkt)\n&/" $destination/$scoreboard_file
+
+
+
+#-------------------------------------------------- THE END ------------------------------------------#

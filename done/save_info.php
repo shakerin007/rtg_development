@@ -22,6 +22,7 @@
 	else{
 		session_start();
 	}
+
 		$_SESSION['tb_id']="";
 		$username=$_SESSION['username'];
 		$password=$_SESSION['password'];

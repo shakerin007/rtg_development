@@ -1,0 +1,68 @@
+#!/bin/bash
+
+#--------------------------------------- How to use it ----------------------------------------------#
+# this script will create a new test class                                                           #
+# To use it three arguments have to passed in terminal                                               # 
+# 1. name of test class                                                                              #
+# 2. name of olde sequence class that has to be overridden                                           #
+# 3. name of new sequence class                                                                      #
+# example :                                                                                          # 
+#         ./add_test new_test old_seq new_seq > file_name                                            #
+# here, file_name is the file where the code has to be written                                       #
+#----------------------------------------------------------------------------------------------------#
+
+test_name=${1:-test_case}
+env_class=${2:-auto_env};
+vsequence=${3:-auto_vsequence};
+r_ins=r_ins;
+env_ins="$env_class"_ins;
+vsequence_ins="$vsequence"_ins;
+cat << _EOF_
+class $test_name extends uvm_test;
+$env_class $env_ins;
+$vsequence $vsequence_ins;
+         \`uvm_component_utils($test_name)
+    
+
+
+
+    	function new(string name, uvm_component parent=null);
+		super.new(name, parent);
+		\`uvm_info(get_full_name(), "In  UVM_ACTIVE_NEW", UVM_LOW);
+
+	endfunction : new
+
+
+
+
+	virtual function void build_phase(uvm_phase phase);
+		super.build_phase(phase);
+		\`uvm_info(get_full_name(), "In  UVM_ACTIVE_BUILD", UVM_LOW);
+		$env_ins=$env_class::type_id::create("$env_ins",this);
+	endfunction : build_phase
+    
+
+
+
+
+	virtual task run_phase(uvm_phase phase);
+		super.run_phase(phase);
+		
+		phase.raise_objection(this, "Objection raise");
+	      \`uvm_info(get_full_name(), "In  UVM_ACTIVE_RUN", UVM_LOW);
+
+		$vsequence_ins=$vsequence::type_id::create("$vsequence_ins");
+		//Sequence Overrides
+		$vsequence_ins.start($env_ins.$vsequence$r_ins);
+
+		phase.drop_objection(this, "Objection_drop");
+	endtask : run_phase
+	
+
+
+
+endclass : $test_name
+
+_EOF_
+
+#-------------------------------------------------- THE END ------------------------------------------#

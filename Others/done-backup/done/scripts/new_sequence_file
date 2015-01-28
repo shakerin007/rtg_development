@@ -1,0 +1,44 @@
+#!/bin/bash
+
+
+
+#--------------------------------------- How to use it ------------------------------------------------------#
+# this script will create a new sequence for a new testcase in a separate sequence file
+# this script is written for using from terminal
+# it can be used like any other script
+#  ./script_name arg1 arg2 arg3 . . .
+#------------------------------------------------------------------------------------------------------------#
+
+extended=${1:-auto};
+new_sequence_file=${2:-new_sequence.sv}
+parent_sequencer=${3:-auto_sequencer}
+destination=${4:-mydir};
+sequence_item=${5:-trans};
+
+uvm_sequence="uvm_sequence"
+new_sequence_class="$extended""_sequence"
+new_sequence_ins="$extended""_sequence_ins"
+parent_sequencer_ins="$parent_sequencer""_ins"
+new='function new';
+
+$DIR/seq_override $uvm_sequence $new_sequence_class $parent_sequencer $sequence_item >> $destination/$new_sequence_file
+
+#echo "Add new sequence to virtual sequence file? (y/n)"
+#read input;
+#if [[ $input == 'y' ]] 
+#then
+#echo "Adding new base sequence to vsequence #(Update pkg file)#"
+#echo "Enter the virtual sequence filename:"
+#read virtual_sequence_file
+
+#sed -i "s/.*$new.*/$new_sequence_class $new_sequence_ins;\n&/" $destination/$virtual_sequence_file
+#sed -i "/fork/a \`uvm_do_on($new_sequence_ins,p_sequencer.$parent_sequencer_ins)" $destination/$virtual_sequence_file
+#sed -i "s/()/($sequence_item_class)/" $destination/$sequencer_file 
+#else
+ #if [[ $input == 'n' ]]
+ #then
+ #echo "Script end" 
+ #fi
+#fi
+
+

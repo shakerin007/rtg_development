@@ -1,0 +1,34 @@
+#!/bin/bash
+
+#--------------------------------------- How to use it ----------------------------------------------#
+# this script will connect an agent to a subscriber
+# it takes five arguments (1 optional) 
+# arguments are: 
+# 1. name of the environment file 
+# 2. name of agent class's instance
+# 3. name of subscriber's class's instance
+# 4. name of agent's port 
+# Example:
+#        ./connect_agent_sub env.sv agent_ins subscriber_ins a_port                                
+#----------------------------------------------------------------------------------------------------#
+
+
+env_file=${1:-env.sv};
+agent_ins=${2:-agent_ins};
+subscriber_ins=${3:-sbs_ins};
+agent_port=${4:-a_port};
+active=${5:-ACTIVE};
+active="ACTIVE";
+passive="PASSIVE"
+destination=${6:-mydir};
+agent_ins_search="UVM_$active""_""$agent_ins" ;
+agentp_ins_search="UVM_$passive""_""$agent_ins" ;
+sbs_port="analysis_export";
+
+sed -i "/$agent_ins_search/a $agent_ins.$agent_port.connect($subscriber_ins.$sbs_port);" $destination/$env_file
+sed -i "/$agentp_ins_search/a $agent_ins.$agent_port.connect($subscriber_ins.$sbs_port);" $destination/$env_file
+
+
+
+
+#-------------------------------------------------- THE END ------------------------------------------#

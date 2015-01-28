@@ -1,0 +1,32 @@
+#!/bin/bash
+
+#--------------------------------------- How to use it ----------------------------------------------#
+# this script will connect a monitor to an agent
+# it takes five arguments (1 optional) 
+# arguments are: 
+# 1. name of the agent file 
+# 2. name of agent port through which monitor will be connected
+# 3. name of monitor class's instance
+# 4. name of monitor's port
+# Example:
+#        ./connect_agent_mon agent.sv a_port monitor_ins mon_port PASSIVE                               
+#----------------------------------------------------------------------------------------------------#
+agent_file=${1:-agent.sv}
+agent_port=${2:-a_port}
+monitor_ins=${3:-monitor}
+mon_port=${4:-mon_port}
+active=${5:-PASSIVE}
+active="ACTIVE"
+passive="PASSIVE"
+destination=${6:-mydir};
+connect='UVM_'$active'_CONNECT';
+connect_passive='UVM_'$passive'_CONNECT';
+
+sed -i "/$connect/a $monitor_ins.$mon_port.connect($agent_port);\n" $destination/$agent_file
+sed -i "/$connect_passive/a $monitor_ins.$mon_port.connect($agent_port);\n" $destination/$agent_file
+
+
+
+
+
+#-------------------------------------------------- THE END ------------------------------------------#

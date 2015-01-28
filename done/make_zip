@@ -1,4 +1,5 @@
 #!/bin/bash
-name=$1;
-zip -r $name".zip" scripts/new/
-rm -Rf scripts/new/
+username=$1;shift;
+tb_id=$1;shift;
+zip -r $username/$tb_id".zip" $username/$tb_id
+rm -Rf $username/$tb_id

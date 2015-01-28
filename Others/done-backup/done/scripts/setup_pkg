@@ -1,0 +1,142 @@
+#!/bin/bash
+package_file_name=$1;
+shift;
+command=$1;
+shift;
+common=$1;shift;
+parent_file=$1;
+
+case $command in 
+
+tb) 
+    echo "" >> $package_file_name ;
+    base="base"
+    test=$common"_$base""_test.sv";
+    vsequence=$common'_vsequence.sv';
+    environment=$common'_env.sv';
+    vsequencer=$common'_vsequencer.sv';
+    agent=$common'_agent.sv'
+    monitor=$common'_monitor.sv'
+    scoreboard=$common'_scb.sv'
+    subscriber=$common'_subscriber.sv'
+    sequence=$common'_sequence.sv'
+    driver=$common'_driver.sv'
+    sequencer=$common'_sequencer.sv'
+    sequence_item=$common'_sequence_item.sv'
+
+    sed -i "/uvm_macros/a \`include \"$test\"" $package_file_name
+    sed -i "/$test/i \`include \"$vsequence\"" $package_file_name
+    sed -i "/$vsequence/i \`include \"$environment\"" $package_file_name
+    sed -i "/$environment/i \`include \"$vsequencer\"" $package_file_name
+    sed -i "/$vsequencer/i \`include \"$agent\"" $package_file_name
+    sed -i "/$agent/i \`include \"$monitor\"" $package_file_name
+    sed -i "/$monitor/i \`include \"$scoreboard\"" $package_file_name
+    sed -i "/$scoreboard/i \`include \"$subscriber\"" $package_file_name
+    sed -i "/$subscriber/i \`include \"$sequence\"" $package_file_name
+    sed -i "/$sequence/i \`include \"$driver\"" $package_file_name
+    sed -i "/$driver/i \`include \"$sequencer\"" $package_file_name
+    sed -i "/uvm_macros/a \`include \"$sequence_item\"" $package_file_name
+   ;;
+
+
+env) 	
+   test=$parent_file'_test.sv';
+   vsequence=$common'_vsequence.sv';
+   environment=$common'_env.sv';
+   vsequencer=$common'_vsequencer.sv';
+   agent=$common'_agent.sv'
+   monitor=$common'_monitor.sv'
+   scoreboard=$common'_scb.sv'
+   subscriber=$common'_subscriber.sv'
+   sequence=$common'_sequence.sv'
+   driver=$common'_driver.sv'
+   sequencer=$common'_sequencer.sv'
+   sequence_item=$common'_sequence_item.sv'
+   sed -i "/$test/i \`include \"$vsequence\"" $package_file_name
+    sed -i "/$vsequence/i \`include \"$environment\"" $package_file_name
+    sed -i "/$environment/i \`include \"$vsequencer\"" $package_file_name
+    sed -i "/$vsequencer/i \`include \"$agent\"" $package_file_name
+    sed -i "/$agent/i \`include \"$monitor\"" $package_file_name
+    sed -i "/$monitor/i \`include \"$scoreboard\"" $package_file_name
+    sed -i "/$scoreboard/i \`include \"$subscriber\"" $package_file_name
+    sed -i "/$subscriber/i \`include \"$sequence\"" $package_file_name
+    sed -i "/$sequence/i \`include \"$driver\"" $package_file_name
+    sed -i "/$driver/i \`include \"$sequencer\"" $package_file_name
+    sed -i "/uvm_macros/a \`include \"$sequence_item\"" $package_file_name   ;;
+
+
+scb)	
+   target=$parent_file'_monitor.sv'
+   scoreboard=$common'_scb.sv'
+   sed -i "/$target/i  \`include \"$scoreboard\"" $package_file_name
+   ;;
+
+
+
+sbr) 	
+   target=$parent_file	
+   subscriber=$common'_subscriber.sv'
+   sed -i "/$target/i \`include \"$subscriber\"" $package_file_name  
+   ;;
+
+
+agent) 
+      agent=$common'_agent.sv'
+      monitor=$common'_monitor.sv'
+      sequence=$common'_sequence.sv'
+      driver=$common'_driver.sv'
+      sequencer=$common'_sequencer.sv'
+      sequence_item=$common'_sequence_item.sv'
+      subscriber=$parent_file'_subscriber.sv'
+
+      sed -i "/vsequencer/i \`include  \"$agent\"" $package_file_name
+      sed -i "/$agent/i  \`include \"$monitor\"" $package_file_name
+      sed -i "/$subscriber/i  \`include \"$sequence\"" $package_file_name
+      sed -i "/$sequence/i  \`include  \"$driver\"" $package_file_name
+      sed -i "/$driver/i   \`include \"$sequencer\"" $package_file_name
+      sed -i "/uvm_macros/a \`include \"$sequence_item\"" $package_file_name   
+      ;;
+
+drv)
+    target=$parent_file'_sequence.sv'			
+    driver=$common'_driver.sv'
+    sed -i "/$target/i  \`include  \"$driver\" " $package_file_name
+    ;;
+
+
+mon)		
+    agent=$parent_file'_agent.sv'
+    monitor=$common'_monitor.sv'
+    sed -i "/$agent/i  \`include \"$monitor\"" $package_file_name
+    ;;
+
+
+
+sqr)			
+    driver=$parent_file'_driver.sv'
+    sequencer=$common'_sequencer.sv'
+    sed -i "/$driver/i  \`include  \"$sequencer\"" $package_file_name
+    ;;
+
+
+
+n_seq)
+      subscriber=$parent_file'.sv'
+      sequence=$common'_sequence.sv'
+      sed -i "/$subscriber/a \`include  \"$sequence\"" $package_file_name
+      ;;
+
+test)
+     test=$common;# the testfilename should be sent as $common from terminal or outside the script
+     sed -i "/endpackage/i \`include  \"$test\"" $package_file_name	
+     #echo $test>>$package_file_name
+     ;;
+
+help)
+     ;;
+
+*)      
+  ;;
+
+esac
+

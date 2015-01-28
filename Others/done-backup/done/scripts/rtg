@@ -1,0 +1,525 @@
+#!/bin/bash
+command=$1;shift;
+pkg_global=$pkg_input;
+
+case $command in 
+tb) 
+	    
+	    common=${1:-auto}
+	    top_file=${2:-top.sv}
+	    destination=${3:-mydir}
+	    base_test_file=${4:-base_test.sv}
+	    test_name=${5:-base_test}
+	    pkg_name=$common"_pkg"
+	    interface_file=$6
+	    interface_class=$7
+	    active=${8:-ACTIVE}
+	    mon_active=${9:-PASSIVE}
+	    interface_file=$common'_intf.sv'
+	    interface_class=$common'_intf'
+	    mkdir $destination
+	    pkg_input=$destination/"$pkg_name".sv
+	    $DIR/create_interface $interface_class > $destination/$interface_file 
+	    $DIR/create_top $interface_file > $destination/$top_file
+	    $DIR/create_test_base $test_name > $destination/$base_test_file
+	    $DIR/env_generate $common $base_test_file $destination $active $mon_active   
+	    $DIR/create_pkg $common $destination/$top_file > $destination/"$pkg_name".sv	
+
+	    $DIR/setup_pkg $pkg_input tb $common  	
+	    echo "Connect Interface using ./connect_interface and ./import_interface"  
+	    ;;
+
+
+
+
+
+env) 	
+	    common=${1:-auto}
+	    base_test_file=${2:-base_test.sv}
+	    destination=${3:-mydir}
+	    active=${4:-ACTIVE}
+	    mon_active=${5:-PASSIVE}
+
+pkg_file="$destination/apb_pkg.sv"
+$DIR/env_generate $common $base_test_file $destination $active $mon_active
+echo `pwd`
+cd $destination
+pkg_file=$(ls *pkg.sv);
+cd $DIR
+echo "Pkg Filename: $pkg_file"
+echo "New env files added. #Update Pkg file#"
+$DIR/setup_pkg $destination/$pkg_file env $common   
+	    ;;
+
+env_i)
+env_class=${1:-auto_env}
+env_class_ins=${2:-auto_env_ins}
+base_test_file=${3:-base_test.sv}
+destination=${4:-mydir}
+
+	$DIR/add_env_ins $env_class $env_class_ins $base_test_file $destination
+;;
+
+
+
+
+scb)	
+	    common=${1:-auto}
+	    env_file=${2:-env.sv}
+	    sequence_item_class=${3:-trans}
+	    destination=${4:-mydir}
+	    scoreboard_file="$common""_scb.sv"
+	    scoreboard_class="$common""_scb"
+	    scoreboard_ins="$common""_scb_ins"
+	    scb_pkt="$common""_sent_pkt"
+	    scoreboard_port="port_""$common""_sent_pkt"
+	    agent_ins="$common""_agent_ins"
+	    monitor_ins="$common""_monitor_ins"
+	    mon_port="$common""_monitor_port"
+	    active="ACTIVE" 
+	    sequence_item_ins="$sequence_item_class""_ins"
+
+
+	    $DIR/create_scb $scoreboard_class $scoreboard_ins $active $env_file $destination> $destination/$scoreboard_file
+	    $DIR/create_scb_port $scoreboard_file $scoreboard_class $scb_pkt $sequence_item_class $sequence_item_ins $destination
+	    $DIR/create_agent_scb $env_file $agent_ins $monitor_ins $mon_port $scoreboard_ins $scoreboard_port $destination
+
+cd $destination
+pkg_file=$(ls *pkg.sv);
+cd $DIR
+echo "Pkg Filename: $pkg_file"
+
+
+	    $DIR/setup_pkg $destination/$pkg_file scb $common $common 	
+
+	    ;;
+
+scb_i)
+scoreboard_class=${1:-default_scb};
+scoreboard_ins=${2:-default_scb_ins};
+active=${3:-ACTIVE};
+env_file=${4:-default_env.sv};
+destination=${5:-mydir};
+$DIR/add_scb_ins $scoreboard_class $scoreboard_ins $active $env_file $destination	
+;;
+
+scb_c)
+env_file=${1:-env.sv};
+agent_ins=${2:-agent_ins};
+monitor_ins=${3:-monitor};
+mon_port=${4:-mon_port};
+scoreboard_ins=${5:-scb};
+scoreboard_port=${6:-scb_port};
+destination=${7:-mydir};
+
+$DIR/create_agent_scb  $env_file $agent_ins $monitor_ins $mon_port $scoreboard_ins $scoreboard_port $destination
+;;
+
+sbr) 		
+	    common=${1:-auto}
+	    env_file=${2:-env.sv}
+	    active=${3:-ACTIVE}
+	    sequence_item_class=${4:-trans}
+	    destination=${5:-mydir}
+	    subscriber_file="$common""_subscriber.sv"
+	    subscriber_class="$common""_sbr"
+	    subscriber_ins="$common""_sub_ins"
+    	    agent_ins="$common""_agent_ins"
+	    agent_port="$common""_a_port"
+
+
+
+	    $DIR/create_subscriber $subscriber_class $subscriber_ins $sequence_item_class $active $env_file $destination> $destination/$subscriber_file
+	    $DIR/connect_agent_sub $env_file $agent_ins $subscriber_ins $agent_port $active $destination
+  	    echo "New subsciber added. #Update Pkg file#":
+
+cd $destination
+pkg_file=$(ls *pkg.sv);
+cd $DIR
+echo "Pkg Filename: $pkg_file"
+ 
+	    $DIR/setup_pkg $destination/$pkg_file sbr $common $env_file
+
+	    ;;
+
+sbr_i)
+subscriber_class=${1:-default_sbr};
+subscriber_ins=${2:-default_sub_ins};
+active=${3:-ACTIVE};
+env_file=${4:-default_env.sv};
+destination=${5:-mydir};
+$DIR/add_subscriber_ins $subscriber_class $subscriber_ins $active $env_file $destination
+;;
+
+sbr_c)
+env_file=${1:-env.sv};
+agent_ins=${2:-agent_ins};
+subscriber_ins=${3:-sbs_ins};
+agent_port=${4:-a_port};
+active=${5:-ACTIVE};
+active="ACTIVE";
+passive="PASSIVE"
+destination=${6:-mydir};
+
+$DIR/connect_agent_sub $env_file $agent_ins $subscriber_ins $agent_port $active $destination 	
+;;
+agent) 
+	    common=${1:-auto}
+	    env_file=${2:-env.sv}
+	    active=${3:-ACTIVE}
+	    destination=${4:-mydir}
+	    env_pre=${5:-auto}
+	    mon_active=$active
+	    agent_file="$common""_agent.sv"
+	    agent_class="$common""_agent"
+	    agent_ins="$common""_agent_ins"
+	    driver_file="$common""_driver.sv"
+	    driver_class="$common""_driver"
+	    driver_ins="$common""_driver_ins"
+	    monitor_file="$common""_monitor.sv"
+	    monitor_class="$common""_monitor"
+	    monitor_ins="$common""_monitor_ins"
+	    agent_port="$common""_a_port"
+	    mon_port="$common""_monitor_port"
+	    sequencer_file="$common""_sequencer.sv"
+	    sequencer_class="$common""_sequencer"
+	    sequencer_ins="$common""_sequencer_ins"
+	    sequence_file="$common""_sequence.sv"
+	    sequence_class="$common""_sequence"
+	    sequence_ins="$common""_sequence_ins"
+	    sequence_item_file="$common""_sequence_item.sv"
+	    sequence_item_class="$common""_trans"
+	    sequence_item_ins="$common""_trans_ins"
+	    virtual_sequencer_file="$env_pre""_vsequencer.sv"
+	    virtual_sequencer_class="$env_pre""_vsequencer"
+	    virtual_sequence_file="$env_pre""_vsequence.sv"
+	    virtual_sequence_class="$env_pre""_vsequence"
+
+$DIR/create_agent $agent_class $agent_ins $active $env_file $destination> $destination/$agent_file 
+$DIR/create_agent_port $agent_file $agent_port $sequence_item_class $destination 
+$DIR/create_driver $driver_class $driver_ins $sequence_item_class $sequence_item_ins $active $agent_file $destination> $destination/$driver_file 
+$DIR/do_sequencer $sequencer_class $sequencer_ins $virtual_sequencer_file $virtual_sequencer_class $driver_ins $agent_file $agent_class $agent_ins $active $sequence_item_class $sequencer_file $env_file $destination 
+$DIR/create_sequence $sequence_class $sequence_ins $sequencer_class $sequencer_ins $sequence_item_class $sequence_item_ins $virtual_sequence_file $destination> $destination/$sequence_file
+$DIR/create_seq_item $sequence_item_class > $destination/$sequence_item_file
+$DIR/do_monitor $monitor_class $monitor_ins $sequence_item_class $sequence_item_ins $agent_port $mon_port $mon_active $agent_file $monitor_file $destination
+echo "New Agent connected. #Update Pkg File#" 
+
+cd $destination
+pkg_file=$(ls *pkg.sv);
+cd $DIR
+echo "Pkg Filename: $pkg_file"
+ 
+	    $DIR/setup_pkg $destination/$pkg_file agent $common
+
+
+	    ;;
+
+agent_i)
+
+agent_class=${1:-auto_agent}
+new_agent_ins=${2:-auto_agent_ins}
+active=${3:-ACTIVE}
+env_filename=${4:-auto_env.sv}
+destination=${5:- mydir}
+
+	$DIR/add_agent_ins $agent_class $new_agent_ins $active $env_filename $destination
+;;
+
+drv)		
+	    common=${1:-auto};
+	    driver_pre=${2:-new};
+	    destination=${3:-mydir};
+	    active="ACTIVE"
+	    driver_file="$driver_pre""_driver.sv"
+	    driver_class="$driver_pre""_driver"
+	    driver_ins="$driver_pre""_driver_ins"
+	    sequence_item_class="$common""_trans"
+	    sequence_item_ins="$common""_trans_ins"
+	    agent_class="$common""_agent.sv"
+
+
+	    $DIR/create_driver $driver_class $driver_ins $sequence_item_class $sequence_item_ins $active $agent_class $destination > $destination/$driver_file
+	    echo "New Driver connected. #Update Pkg File#"	
+
+cd $destination
+pkg_file=$(ls *pkg.sv);
+cd $DIR
+echo "Pkg Filename: $pkg_file"
+ 
+	    $DIR/setup_pkg $destination/$pkg_file drv $driver_pre $common
+
+
+	    ;;
+
+drv_i)
+driver_class=${1:-default_driver}
+driver_ins=${2:-driver}
+agent_file=${3:-default_agent.sv};
+destination=${4:-mydir};
+
+$DIR/add_driver_ins $driver_class $driver_ins $agent_file $destination
+;;
+mon)		
+	    common=${1:-auto}
+	    agent_pre=${2:-auto}
+	    mon_active=${3:-PASSIVE}
+	    destination=${4:-mydir}
+	    monitor_class="$common""_monitor"
+	    monitor_ins="$common""_monitor_ins"
+	    sequence_item_class="$agent_pre""_trans"
+	    sequence_item_ins="$agent_pre""_trans_ins"
+ 	    agent_file="$agent_pre""_agent.sv"
+	    agent_port="$agent_pre""_a_port"
+	    mon_port="$common""_monitor_port"
+	    monitor_file="$common""_monitor.sv"
+
+
+
+	    $DIR/create_monitor $monitor_class $monitor_ins $sequence_item_class $sequence_item_ins $mon_active $agent_file $destination> $destination/$monitor_file  
+	    $DIR/connect_agent_mon $agent_file $agent_port $monitor_ins $mon_port $mon_active $destination 
+
+cd $destination
+pkg_file=$(ls *pkg.sv);
+cd $DIR
+echo "Pkg Filename: $pkg_file"
+ 
+	    $DIR/setup_pkg $destination/$pkg_file mon $common $agent_pre
+
+	    ;;
+
+mon_i)
+monitor_pre=${1:-auto}
+monitor_ins=${2:-auto_monitor_ins2}
+agent_pre=${3:-auto}
+destination=${4:-mydir}
+
+	    $DIR/add_monitor_ins $monitor_pre $monitor_ins $agent_pre $agent_file $destination
+
+;;
+
+sqr)		
+	    common=${1:-auto};
+	    agent_pre=${2:-agent};
+	    env_file=${3:-env.sv}
+	    sequence_item_class=${4:-trans};
+	    destination=${5:-mydir};
+	
+	    $DIR/sequencer_generate $common $agent_pre $env_file $sequence_item_class $destination
+	    echo "New Sequencer connected. #Update Pkg File#"	
+cd $destination
+pkg_file=$(ls *pkg.sv);
+cd $DIR
+echo "Pkg Filename: $pkg_file"
+ 
+	    $DIR/setup_pkg $destination/$pkg_file sqr $common $agent_pre
+	    ;;
+
+sqr_i)
+sequencer_class=${1:-auto_sequencer}
+sequencer_ins=${2:-auto_sequencer_ins2}
+agent_file=${3:-agent.sv}
+destination=${4:-mydir}
+
+$DIR/add_sequencer_ins $sequencer_class $sequencer_ins $agent_file $destination
+;;
+
+c_sqr)
+agent_file=${1:-default_agent.sv};
+driver_ins=${2:-default_driver};
+sequencer_ins=${3:-default_sequencer};
+active="ACTIVE";
+destination=${4:-mydir};
+$DIR/connect_sequencer $agent_file $driver_ins $sequencer_ins $active $destination
+;;
+
+intf)
+	   echo "Add Interface Option"  
+	   interface_with_modport=${1:-intf}
+	   interface_name=${2:-intf}
+	   env_class_ins=${3:-env}
+	   agent_class_ins=${4:-agent}
+	   file=${5:-top.sv}
+
+	   destination=${6:-mydir};
+
+	   run="UVM_ACTIVE_RUN"
+
+	   $DIR/connect_interface $interface_with_modport $interface_name $env_class_ins $agent_class_ins $file $destination $run
+	   echo "Interface connected"	  
+;;
+
+c_intf)
+	   echo "Connect Interface Option"
+	   connect='UVM_CONNECT';
+	   new="function new";
+
+	   interface_with_modport=$1;
+	   interface_ins=$2;
+	   destination=${3:-mydir};
+      
+ 	   #$DIR/import_interface $interface_with_modport $interface_ins $destination
+
+	  while [[ $#>3 ]];do
+	  sed -i "s/.*$new.*/virtual interface $interface_with_modport $interface_ins;\n&/" $destination/$4
+	  sed -i "/$connect/a if((uvm_config_db#(virtual $interface_with_modport)::get(this,\"\", \"$interface_ins\",$interface_ins)))\n\`uvm_info(get_full_name(), \"Interface Connected\", UVM_LOW);" $destination/$4
+	  shift
+	  done	
+	  echo "Interface Imported"
+;;
+
+a_seq)
+extended=${1:-ext};
+base_sequence_file=${2:-base_sequence.sv}
+base_sequence=${3:-base_sequence}
+parent_sequencer=${4:-ext_sequencer}
+destination=${5:-mydir};
+sequence_item=${6:-trans};
+
+	$DIR/new_sequence $extended $base_sequence_file $base_sequence $parent_sequencer $destination $sequence_item 
+;;
+
+n_seq)
+extended=${1:-auto};
+new_sequence_file=${2:-new_sequence.sv}
+parent_sequencer=${3:-auto_sequencer}
+destination=${4:-mydir};
+sequence_item=${5:-trans};
+
+	$DIR/new_sequence_file $extended $new_sequence_file $parent_sequencer $destination $sequence_item
+cd $destination
+pkg_file=$(ls *pkg.sv);
+cd $DIR
+echo "Pkg Filename: $pkg_file"
+ 
+	    $DIR/setup_pkg $destination/$pkg_file n_seq $extended $parent_sequencer 
+;;
+
+test)
+new_test_file=${1:-new_test.sv}
+new_test_name=${2:-test_case}
+env_class=${3:-auto_env};
+vsequence=${4:-auto_vsequence};
+destination=${5:-mydir};
+
+$DIR/add_test $new_test_name $env_class $vsequence> $destination/$new_test_file
+#$DIR/override $destination $new_test_file
+echo "New Test file created. #Update Pkg File#"
+cd $destination
+pkg_file=$(ls *pkg.sv);
+cd $DIR
+echo "Pkg Filename: $pkg_file"
+ 
+	    $DIR/setup_pkg $destination/$pkg_file test $new_test_file
+;;
+
+help)
+	gvim /home/ius/Naveed/tool_test_folder/tested_options
+;;
+
+*)      
+	    echo "                                                         "
+	    echo "---------------------------------------------------------"
+	    echo "Arguments needed for Whole Testbench Framework Generation"
+	    echo "---------------------------------------------------------"
+	    grep "=*{" $DIR/testbench| cut -d = -f 1
+	    echo "rtg testbench argument1 argument2 argument3 . . . . ."
+	    echo "---------------------------------------------------------"
+	    echo "                                                         "
+
+	    echo "Arguments needed for 'new Environment' creation"
+	    echo "---------------------------------------------------------"
+	    grep "=*{" $DIR/env_generate| cut -d = -f 1
+	    echo "rtg env argument1 argument2 argument3 . . . . ."
+	    echo "---------------------------------------------------------"
+	    echo "                                                         "
+
+	    echo "Arguments needed for 'new Scoreboard' creation"
+	    echo "---------------------------------------------------------"
+	    grep "=*{" $DIR/env_generate| cut -d = -f 1
+	    echo "rtg scb argument1 argument2 argument3 . . . . ."
+	    echo "---------------------------------------------------------"
+	    echo "                                                         "
+
+
+	    echo "Arguments needed for 'new Subscriber' creation"
+	    echo "---------------------------------------------------------"
+	    grep "=*{" $DIR/agent_generate| cut -d = -f 1
+	    echo "rtg sbr argument1 argument2 argument3 . . . . ."
+	    echo "---------------------------------------------------------"
+	    echo "                                                         "
+
+	    echo "Arguments needed for 'new Agent' creation"
+	    echo "---------------------------------------------------------"
+	    grep "=*{" $DIR/env_generate| cut -d = -f 1
+	    echo "rtg agent argument1 argument2 argument3 . . . . ."
+	    echo "---------------------------------------------------------"
+	    echo "                                                         "
+
+
+	    echo "Arguments needed for 'new Driver' creation"
+	    echo "---------------------------------------------------------"
+	    grep "=*{" $DIR/agent_generate| cut -d = -f 1
+	    echo "rtg drv argument1 argument2 argument3 . . . . ."
+	    echo "---------------------------------------------------------"
+	    echo "                                                         "
+
+	    echo "Arguments needed for 'new Monitor' creation"
+	    echo "---------------------------------------------------------"
+	    grep "=*{" $DIR/env_generate| cut -d = -f 1
+	    echo "rtg mon argument1 argument2 argument3 . . . . ."
+	    echo "---------------------------------------------------------"
+	    echo "                                                         "
+
+
+	    echo "Arguments needed for 'new Sequencer' creation"
+	    echo "---------------------------------------------------------"
+	    grep "=*{" $DIR/agent_generate| cut -d = -f 1
+	    echo "rtg sqr argument1 argument2 argument3 . . . . ."
+	    echo "---------------------------------------------------------"
+	    echo "                                                         "
+
+	    ;;
+
+esac
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

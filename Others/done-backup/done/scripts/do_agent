@@ -1,0 +1,102 @@
+#!/bin/bash
+
+#--------------------------------------- How to use it ------------------------------------------------------#
+# this script will create an agent and lower classes(monitor,driver,sequencer etc.) based on given arguments
+# this script is written only for using from other scripts
+# it should not be used from terminal 
+#------------------------------------------------------------------------------------------------------------#
+
+
+env_file=${1:-default_env.sv};
+
+agent_file=${2:-default_agent.sv};
+agent_class=${3:-default_agent};
+agent_ins=${4:-default_agent_ins};
+
+driver_file=${5:-driver.sv}
+driver_class=${6:-default_driver}
+driver_ins=${7:-driver}
+
+monitor_file=${8:-monitor.sv}
+monitor_class=${9:-default_monitor};
+shift;
+monitor_ins=${9:-monitor};
+
+shift;
+agent_port=${9:-a_port};
+shift;
+mon_port=${9:-mon_port};
+
+
+shift;
+sequencer_file=${9:-sequencer.sv}
+shift;
+sequencer_class=${9:-default_sequencer};
+shift;
+sequencer_ins=${9:-sequencer};
+
+
+shift;
+sequence_file=${9:-sequence.sv}
+shift;
+sequence_class=${9:-default_sequence};
+shift;
+sequence_ins=${9:-sequence_ins};
+
+
+
+shift;
+sequence_item_file=${9:-sequence_item.sv}
+shift;
+sequence_item_class=${9:-trans}
+shift;
+sequence_item_ins=${9:-trans_ins}
+
+
+
+
+
+shift;
+virtual_sequencer_file=${9:-default_vsequencer.sv};
+
+shift;
+virtual_sequencer_class=${9:-default_vsequencer};
+
+
+shift;
+virtual_sequence_file=${9:-default_vsequence.sv};
+
+shift;
+virtual_sequence_class=${9:-default_vsequence};
+
+shift
+mon_active=${9:-PASSIVE};
+shift;
+active=${9:-ACTIVE};
+shift;
+destination=${9:-mydir};
+
+
+
+
+
+
+
+
+
+
+
+$DIR/create_agent $agent_class $agent_ins $active $env_file $destination> $destination/$agent_file 
+$DIR/create_agent_port $agent_file $agent_port $sequence_item_class $destination 
+$DIR/create_driver $driver_class $driver_ins $sequence_item_class $sequence_item_ins $active $agent_file $destination> $destination/$driver_file 
+$DIR/do_monitor $monitor_class $monitor_ins $sequence_item_class $sequence_item_ins $agent_port $mon_port $mon_active $agent_file $monitor_file $destination 
+$DIR/do_sequencer $sequencer_class $sequencer_ins $virtual_sequencer_file $virtual_sequencer_class $driver_ins $agent_file $agent_class $agent_ins $active $sequence_item_class $sequencer_file $env_file $destination 
+$DIR/create_sequence $sequence_class $sequence_ins $sequencer_class $sequencer_ins $sequence_item_class $sequence_item_ins $virtual_sequence_file $destination> $destination/$sequence_file
+$DIR/create_seq_item $sequence_item_class > $destination/$sequence_item_file
+
+
+
+
+
+
+
