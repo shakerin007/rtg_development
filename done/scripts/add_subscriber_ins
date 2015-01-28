@@ -1,0 +1,17 @@
+#!/bin/bash
+
+subscriber_class=${1:-default_sbr};
+subscriber_ins=${2:-default_sub_ins};
+active=${3:-ACTIVE};
+env_file=${4:-default_env.sv};
+destination=${5:-mydir};
+
+new_f='UVM_NEW';
+build='UVM_'$active'_BUILD';
+connect='UVM_'$active'_CONNECT';
+
+# Make instance of the created subscriber_class inside the given environment class
+sed -i "/uvm_env/a $subscriber_class $subscriber_ins ;" $destination/$env_file
+
+# Create instance of the subscriber_class inside build_phase of environment class 
+sed -i "/$build/a $subscriber_ins=$subscriber_class::type_id::create(\"$subscriber_ins\",this);" $destination/$env_file

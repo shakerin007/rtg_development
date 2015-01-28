@@ -1,0 +1,63 @@
+#!/bin/bash
+
+#--------------------------------------- How to use it ------------------------------------------------------#
+# this script will create an instance of virtual sequencer class inside environment class  
+# it takes some arguments 
+# this script is written only for using from other scripts
+# it should not be used from terminal 
+#------------------------------------------------------------------------------------------------------------#
+
+
+virtual_sequencer_class=${1:-default_vsequencer};
+virtual_sequencer_ins=${2:-default_vsequencer_ins};
+active=${3:-ACTIVE};
+new_f='UVM_NEW';
+build='UVM_'$active'_BUILD';
+connect='UVM_'$active'_CONNECT';
+
+env_file=${4:-default_env.sv};
+shift;
+destination=${4:-mydir};
+
+# Make instance of the created virtual_sequencer_class inside the given environment class
+sed -i "/uvm_env/a $virtual_sequencer_class $virtual_sequencer_ins ;" $destination/$env_file
+
+# Create instance of the virtual_sequencer_class inside build_phase of environment class 
+sed -i "/$build/a $virtual_sequencer_ins=$virtual_sequencer_class::type_id::create(\"$virtual_sequencer_ins\",this);" $destination/$env_file
+
+
+
+cat << _EOF_
+class $virtual_sequencer_class extends uvm_sequencer;
+
+
+       \`uvm_component_utils($virtual_sequencer_class)
+		
+
+	function new(string name="$virtual_sequencer_class", uvm_component parent=null);
+	    super.new(name, parent);
+	    \`uvm_info(get_full_name(), "In constructor UVM_ACTIVE_NEW", UVM_LOW);
+	endfunction:new
+
+
+endclass: $virtual_sequencer_class
+
+_EOF_
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#----------------------------------------------------------------------------------------------------------------------------------------------------
+#--------------------------------------------------------------------------------------------------------------------------- developed by,-----------
+#---------------------------------------------------------------------------------------------------------------------------SHAKERIN AHMED-----------
+#----------------------------------------------------------------------------------------------------------------------------------------------------

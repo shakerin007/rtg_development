@@ -1,0 +1,47 @@
+#!/bin/bash
+
+
+
+#--------------------------------------- How to use it ----------------------------------------------#
+# this script will connect driver class with sequencer class inside agent file
+# it takes five arguments 
+# arguments are: 
+# 1. name of agent file 
+# 2. name of driver class's instance
+# 3. name of sequencer class's instance
+# 4. no need of this argument. just use ACTIVE 
+# 5. destination folder name 
+# Example:
+#        ./connect_sequencer agent.sv driver_ins sequencer_ins ACTIVE destination_folder                                
+#----------------------------------------------------------------------------------------------------#
+
+
+
+agent_file=${1:-default_agent.sv};
+driver_ins=${2:-default_driver};
+sequencer_ins=${3:-default_sequencer};
+active=${4:-ACTIVE};
+destination=${5:-mydir};
+
+active="ACTIVE";
+build='UVM_'$active'_BUILD';
+connect='UVM_'$active'_CONNECT';
+
+port="seq_item_port";
+ex_port="seq_item_export";
+
+
+# inside connect phase of agent class, Connect driver port with sequencer export
+sed -i "/$connect/a $driver_ins.$port.connect($sequencer_ins.$ex_port);\n" $destination/$agent_file
+
+
+
+
+
+
+
+
+
+
+
+#-------------------------------------------------- THE END ---------------------------------------------------------#

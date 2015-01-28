@@ -1,0 +1,65 @@
+#!/bin/bash
+
+#--------------------------------------- How to use it ------------------------------------------------------#
+# this script will do few things
+# 1. it creates an instance of sequence class inside virtual sequence file 
+# 2. it connects this sequence class with a sequencer inside virtual sequence file using uvm_do Macro
+# it takes some arguments 
+# this script is written only for using from other scripts
+# it should not be used from terminal 
+#------------------------------------------------------------------------------------------------------------#
+
+
+
+sequence_class=${1:-default_sequence};
+sequence_ins=${2:-sequence_ins};
+
+sequencer_class=${3:-default_sequencer};
+sequencer_ins=${4:-sequencer_ins};
+
+
+sequence_item_class=${5:-trans};
+sequence_item_ins=${6:-trans_ins};
+virtual_sequence_file=${7:-default_vsequence.sv};
+shift;
+destination=${7:-mydir};
+
+sequencer_file="$sequencer_class.sv"
+
+new_f='UVM_NEW';
+build='UVM_'$active'_BUILD';
+connect='UVM_'$active'_CONNECT';
+new='function new';
+port="uvm_analysis_port#";
+
+sed -i "s/.*$new.*/$sequence_class $sequence_ins;\n&/" $destination/$virtual_sequence_file
+sed -i "/fork/a \`uvm_do_on($sequence_ins,p_sequencer.$sequencer_ins)" $destination/$virtual_sequence_file
+
+cat << _EOF_
+
+class $sequence_class extends uvm_sequence;
+
+
+	\`uvm_object_utils($sequence_class)
+	\`uvm_declare_p_sequencer($sequencer_class)
+
+	  rand $sequence_item_class $sequence_item_ins;
+
+
+	function new(string name = "$sequence_class");
+		super.new(name);
+	endfunction : new
+
+
+
+	virtual task body();
+	endtask : body	
+
+
+endclass : $sequence_class
+
+_EOF_
+
+
+
+#-------------------------------------------------- THE END ---------------------------------------------------------#

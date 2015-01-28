@@ -1,0 +1,26 @@
+#!/bin/bash
+
+
+#--------------------------------------- How to use it ------------------------------------------------------#
+# this script will create a driver and connect it to agent
+# this script is written for using from terminal
+# it can be used like any other script
+#  ./script_name arg1 arg2 arg3 . . .
+#------------------------------------------------------------------------------------------------------------#
+
+common=${1:-auto};
+driver_pre=${2:-new};
+#base_test_file=${2:-base_test.sv}
+#active=${3:-ACTIVE};
+destination=${3:-mydir};
+active="ACTIVE"
+driver_file="$driver_pre""_driver.sv"
+driver_class="$driver_pre""_driver"
+driver_ins="$driver_pre""_driver_ins"
+
+sequence_item_class="$common""_trans"
+sequence_item_ins="$common""_trans_ins"
+agent_class="$common""_agent.sv"
+
+
+$DIR/create_driver $driver_class $driver_ins $sequence_item_class $sequence_item_ins $active $agent_class $destination > $destination/$driver_file

@@ -18,7 +18,7 @@
 			$_SESSION['username']=$username;
 			$_SESSION['password']=$password;	
 		}
-  }
+  	}
 	else{
 		session_start();
 	}
@@ -54,7 +54,10 @@
 		echo  "<option value='hierarchy'> <em>View Hierarchy</em></option> ";	
 		echo  "</select>";
 		echo  "<input type='submit' name='submit' value='View Testbench Information'></input>";
-	
+		echo "</form>";
+		echo "<form action='download.php' style='display:inline;' method='POST'>";
+		echo  "<input type='hidden' name='TB_id' value={$row['tb_id']}   readonly></input>";
+		echo  "<input type='submit' name='download' value='download'></input>";
 		echo "</form>";
 		echo "<form action='delete_tb.php' style='display:inline;' method='POST'>";
 		echo  "<input type='hidden' name='TB_id' value={$row['tb_id']}   readonly></input>";

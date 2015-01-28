@@ -1,0 +1,24 @@
+#!/bin/bash
+destination=$1;
+test_file=$2;
+
+for i in 1 2 3 4 5 
+do
+  echo "Override sequence? (y/n)";
+  read yn;
+  if [[ $yn == 'n' ]]
+  then
+    break;	
+  
+  else if [[ $yn == 'y' ]]
+  then
+    echo "Old Sequence:"
+    read old_sequence_class;
+    echo "New Sequence:"
+    read new_sequence_class;
+sed -i "/Overrides/a $old_sequence_class::type_id::set_type_override($new_sequence_class::get_type());" $destination/$test_file  
+    #echo "$old_sequence_class::type_id::set_type_override($new_sequence_class::get_type());";  
+    fi
+  fi
+done
+

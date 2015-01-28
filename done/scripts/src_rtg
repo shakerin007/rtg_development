@@ -1,0 +1,4 @@
+export DIR=/tools/RTG
+export DESTDIR=/tools/RTG
+export PATH="$PATH:/tools/RTG"
+

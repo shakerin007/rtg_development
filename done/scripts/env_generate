@@ -1,0 +1,95 @@
+#!/bin/bash
+
+
+
+#--------------------------------------- How to use it ------------------------------------------------------#
+# this script will create an environment and connect it to testbench
+# this script is written for using from terminal
+# it can be used like any other script
+#  ./script_name arg1 arg2 arg3 . . .
+#------------------------------------------------------------------------------------------------------------#
+
+
+common=${1:-auto};
+base_test_file=${2:-base_test.sv}
+destination=${3:-mydir};
+active=${4:-ACTIVE};
+mon_active=${5:-PASSIVE};
+
+
+
+virtual_sequencer_file="$common""_vsequencer.sv"
+virtual_sequencer_class="$common""_vsequencer"
+virtual_sequencer_ins="$common""_vsequencer_ins"
+virtual_sequence_file="$common""_vsequence.sv"
+virtual_sequence_class="$common""_vsequence"
+virtual_sequence_ins="$common""_vsequence_ins"
+subscriber_file="$common""_subscriber.sv"
+subscriber_class="$common""_sbr"
+subscriber_ins="$common""_sub_ins"
+scoreboard_file="$common""_scb.sv"
+scoreboard_class="$common""_scb"
+scoreboard_ins="$common""_scb_ins"
+scb_pkt="$common""_sent_pkt"
+scoreboard_port="port_""$common""_sent_pkt"
+
+env_file="$common""_env.sv"
+env_class="$common""_env"
+env_ins="$common""_env_ins"
+agent_file="$common""_agent.sv"
+agent_class="$common""_agent"
+agent_ins="$common""_agent_ins"
+agent_port="$common""_a_port"
+driver_file="$common""_driver.sv"
+driver_class="$common""_driver"
+driver_ins="$common""_driver_ins"
+monitor_file="$common""_monitor.sv"
+monitor_class="$common""_monitor"
+monitor_ins="$common""_monitor_ins"
+mon_port="$monitor_class""_port"
+sequencer_file="$common""_sequencer.sv"
+sequencer_class="$common""_sequencer"
+sequencer_ins="$common""_sequencer_ins"
+sequence_file="$common""_sequence.sv"
+sequence_class="$common""_sequence"
+sequence_ins="$common""_sequence_ins"
+sequence_item_file="$common""_sequence_item.sv"
+sequence_item_class="$common""_trans"
+sequence_item_ins="$common""_trans_ins"
+
+
+
+
+
+
+
+
+$DIR/create_env $env_class $env_ins $base_test_file $active $destination> $destination/$env_file
+$DIR/create_vsequencer $virtual_sequencer_class $virtual_sequencer_ins $active $env_file $destination> $destination/$virtual_sequencer_file
+$DIR/create_vsequence $virtual_sequence_class $virtual_sequence_ins $virtual_sequencer_class $virtual_sequencer_ins $base_test_file $env_class $env_ins $active $destination> $destination/$virtual_sequence_file
+$DIR/do_agent $env_file $agent_file $agent_class $agent_ins $driver_file $driver_class $driver_ins $monitor_file $monitor_class $monitor_ins $agent_port $mon_port $sequencer_file $sequencer_class $sequencer_ins $sequence_file $sequence_class $sequence_ins $sequence_item_file $sequence_item_class $sequence_item_ins $virtual_sequencer_file $virtual_sequencer_class $virtual_sequence_file $virtual_sequence_class $mon_active $active $destination
+$DIR/do_subscriber $subscriber_file $subscriber_class $subscriber_ins $sequence_item_class $env_file $agent_ins $agent_port $active $destination
+$DIR/do_scoreboard $scoreboard_file $scoreboard_class $scoreboard_ins $scb_pkt $scoreboard_port $env_file $agent_ins $monitor_ins $mon_port $sequence_item_class $sequence_item_ins $active $destination
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

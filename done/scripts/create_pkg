@@ -1,0 +1,25 @@
+#!/bin/bash
+
+common=$1;
+shift;
+top_file=$1;
+pkg_name=$common"_pkg"
+
+sed -i '1s/^/\`include "'$pkg_name'.sv";\n /' $top_file 
+sed -i "/uvm_macros.svh/a   \\\timport $pkg_name::*;" $top_file 
+
+cat << _EOF_
+package $pkg_name;
+
+  // Include UVM Package library 
+  import uvm_pkg::*;
+  \`include "uvm_macros.svh"
+
+endpackage
+
+
+_EOF_
+
+
+
+

@@ -1,0 +1,29 @@
+#!/bin/bash
+monitor_pre=${1:-auto}
+monitor_class="$monitor_pre""_monitor"
+mon_port="$monitor_pre""_monitor_port"
+monitor_ins=${2:-auto_monitor_ins2}
+agent_pre=${3:-auto}
+agent_port="$agent_pre""_a_port";
+agent_file="$agent_pre""_agent.sv";
+destination=${4:-mydir}
+
+passive="PASSIVE";
+active="ACTIVE";
+
+build='UVM_'$active'_BUILD';
+build_passive='UVM_'$passive'_BUILD';
+
+connect='UVM_'$active'_CONNECT';
+connect_passive='UVM_'$passive'_CONNECT';
+
+# Make instance of monitor inside the given agent class
+sed -i "/uvm_agent/a $monitor_class $monitor_ins ;" $destination/$agent_file
+
+# create monitor instance inside the build_phase of agent class
+sed -i "/$build/a $monitor_ins=$monitor_class::type_id::create(\"$monitor_ins\",this);" $destination/$agent_file
+sed -i "/$build_passive/a $monitor_ins=$monitor_class::type_id::create(\"$monitor_ins\",this);" $destination/$agent_file
+
+sed -i "/$connect/a $monitor_ins.$mon_port.connect($agent_port);\n" $destination/$agent_file
+sed -i "/$connect_passive/a $monitor_ins.$mon_port.connect($agent_port);\n" $destination/$agent_file
+

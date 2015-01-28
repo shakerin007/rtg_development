@@ -1,0 +1,27 @@
+#!/bin/bash
+
+#--------------------------------------- How to use it ------------------------------------------------------#
+# this script will send interface in any specified component 
+# it can be used like any other script
+#  ./script_name arg1 arg2 arg3 . . .
+#------------------------------------------------------------------------------------------------------------#
+
+
+connect='UVM_CONNECT';
+new="function new";
+
+
+echo "number of arguments passed is $#";
+
+interface_with_modport=$1;
+interface_ins=$2;
+destination=${3:-mydir};
+while [[ $#>3 ]];do
+sed -i "s/.*$new.*/virtual interface $interface_with_modport $interface_ins;\n&/" $destination/$4
+sed -i "/$connect/a if((uvm_config_db#(virtual $interface_with_modport)::get(this,\"\", \"$interface_ins\",$interface_ins)))\n\`uvm_info(get_full_name(), \"Interface Connected\", UVM_LOW);" $destination/$4
+
+
+shift
+done
+
+

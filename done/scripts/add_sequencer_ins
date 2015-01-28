@@ -1,0 +1,42 @@
+#!/bin/bash
+
+sequencer_class=${1:-auto_sequencer}
+sequencer_ins=${2:-auto_sequencer_ins2}
+agent_file=${3:-agent.sv}
+destination=${4:-mydir}
+
+
+active="ACTIVE"
+new_f='UVM_NEW';
+build='UVM_'$active'_BUILD';
+connect='UVM_'$active'_CONNECT';
+new='function new';
+port="uvm_analysis_port#";
+
+# make an instance of the sequencer class inside the given agent class
+sed -i "/uvm_agent/a $sequencer_class $sequencer_ins ;" $destination/$agent_file
+
+# create the instance of sequencer class inside the build_phase of the given agent class
+sed -i "/$build/a $sequencer_ins=$sequencer_class::type_id::create(\"$sequencer_ins\",this);" $destination/$agent_file
+echo "Add sequence ins to virtual sequencer? (y/n)";
+read input;
+if [[ $input == 'y' ]] 
+then
+ echo "Virtual Sequencer class::";
+ read vsqr;
+ virtual_sequencer_ins="$vsqr"'_ins';
+ virtual_sequencer_file="$vsqr"".sv"
+ echo "Env filename::"
+ read env_file;
+ echo "Agent instance::";
+ read agent_ins;
+ sed -i "s/.*$new.*/$sequencer_class $sequencer_ins;\n&/" $destination/$virtual_sequencer_file
+ sed -i "/$connect/a $virtual_sequencer_ins.$sequencer_ins=$agent_ins.$sequencer_ins;" $destination/$env_file
+else
+ if [[ $input == 'n' ]]
+ then
+  echo "Script end" 
+ fi
+fi
+
+

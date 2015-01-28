@@ -1,0 +1,4 @@
+#!/bin/bash
+name=$1;
+zip -r $name".zip" scripts/new/
+rm -Rf scripts/new/

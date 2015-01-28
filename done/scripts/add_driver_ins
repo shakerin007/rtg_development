@@ -1,0 +1,18 @@
+#!/bin/bash
+
+driver_class=${1:-default_driver}
+driver_ins=${2:-driver}
+agent_file=${3:-default_agent.sv};
+destination=${4:-mydir};
+
+active="ACTIVE"
+build='UVM_'$active'_BUILD';
+connect='UVM_'$active'_CONNECT';
+
+
+# Make instance of the created driver inside the given agent class
+sed -i "/uvm_agent/a $driver_class $driver_ins ;" $destination/$agent_file
+
+# Create instance of the driver class inside build_phase of agent class 
+sed -i "/$build/a $driver_ins=$driver_class::type_id::create(\"$driver_ins\",this);\n" $destination/$agent_file
+

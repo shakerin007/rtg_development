@@ -1,0 +1,30 @@
+#!/bin/bash
+
+
+
+#--------------------------------------- How to use it ------------------------------------------------------#
+# this script will create a subscriber and connect it to environment
+# this script is written for using from terminal
+# it can be used like any other script
+#  ./script_name arg1 arg2 arg3 . . .
+#------------------------------------------------------------------------------------------------------------#
+
+common=${1:-auto};
+env_file=${2:-env.sv}
+active=${3:-ACTIVE};
+destination=${4:-mydir};
+
+
+
+
+subscriber_file="$common""_subscriber.sv"
+subscriber_class="$common""_sbr"
+subscriber_ins="$common""_sub_ins"
+sequence_item_class="$common""_trans"
+agent_ins="$common""_agent_ins"
+agent_port="$common""_a_port"
+
+
+
+$DIR/create_subscriber $subscriber_class $subscriber_ins $sequence_item_class $active $env_file $destination> $destination/$subscriber_file
+$DIR/connect_agent_sub $env_file $agent_ins $subscriber_ins $agent_port $active $destination

@@ -1,0 +1,62 @@
+#|Creates basic structure| of testbench including a general interface file
+rtg tb apb apb_top.sv /home/ius/Naveed/tool_test_folder/apb_tb_3 apb_base_test.sv apb_base_test  
+
+
+#|Connects interface| to the top level file
+rtg intf apb_intf apb_intf apb_env_ins apb_agent_ins apb_top.sv /home/ius/Naveed/tool_test_folder/apb_tb_3
+#|Connects the interface| from the top level to lower level components such as Driver, Monitor
+rtg c_intf apb_intf apb_intf /home/ius/Naveed/tool_test_folder/apb_tb_3 apb_driver.sv apb_monitor.sv
+
+
+#|Creates a driver class| (in newfile) and instantiates it in apb_agent without any connections
+rtg drv apb apb_rand /home/ius/Naveed/tool_test_folder/apb_tb_3
+  #|Create driver instance|
+  rtg drv_i apb_driver apb_driver_ins2 apb_agent.sv /home/ius/Naveed/tool_test_folder/apb_tb_3
+
+
+#|Creates a new monitor class| (in newfile) and instantiates it with connections in agent
+rtg mon apb_slv apb PASSIVE /home/ius/Naveed/tool_test_folder/apb_tb_3
+  #|Create a monitor instance| instantiates and connections in agent file only
+  rtg mon_i apb apb_monitor_ins2 apb /home/ius/Naveed/tool_test_folder/apb_tb_3
+
+
+#|Creates a sequencer class| (in newfile) and instantiates it in (1) agent (2) virtual sequencer. Makes connections in agent and environment (Driver with same prefix must exist for this connection)
+rtg sqr apb_rand apb apb_env.sv apb_trans /home/ius/Naveed/tool_test_folder/apb_tb_3
+  #|Create a sequencer instance|
+  rtg sqr_i apb_sequencer apb_sequencer_ins3 apb_agent.sv /home/ius/Naveed/tool_test_folder/apb_tb_3
+  #|Connect sequencer with driver| inside agent
+  rtg c_sqr apb_agent.sv apb_driver_ins2 apb_sequencer_ins3 /home/ius/Naveed/tool_test_folder/apb_tb_3
+
+#|Creates a new sequence class| and adds it to the existing sequence file 
+rtg a_seq apb_rand apb_sequence.sv apb_sequence apb_sequencer /home/ius/Naveed/tool_test_folder/apb_tb_3 apb_trans  
+#|Create a new base sequence| (in newfile) and also instantiate it to virtual sequence file (optional)
+rtg n_seq apb_cfg apb_cfg_sequence.sv apb_sequencer /home/ius/Naveed/tool_test_folder/apb_tb_3 apb_trans
+
+
+#|Creates a new test| (in newfile) with instances of env and vsequence and overriding old sequence with a new sequence
+rtg test apb_burst_test.sv apb_burst_test apb_env apb_vsequence /home/ius/Naveed/tool_test_folder/apb_tb_3
+
+
+#|Creates new agent| component, with instance and connection in env. Also creates components inside agent with instances+interconnections. Creates new sequence, sequencer, sequence_item and adds instances to vsequencer, vsequence, env.
+rtg agent apb_master apb_env.sv ACTIVE /home/ius/Naveed/tool_test_folder/apb_tb_3 apb
+  #|Add agent instance|of exising agent class, instantiate and create in env_apb_master_sent_pkt
+  rtg agent_i apb_agent apb_agent_ins2 ACTIVE apb_env.sv /home/ius/Naveed/tool_test_folder/apb_tb_3
+
+
+#|Creates new env| with entire hiearchy of components and connections
+rtg env uart apb_base_test.sv /home/ius/Naveed/tool_test_folder/apb_tb_3
+  #|Add new env instance|
+  rtg env_i apb_env apb_env_ins2 apb_base_test.sv /home/ius/Naveed/tool_test_folder/apb_tb_3
+
+
+#|Creates new scoreboard| New Agent must be created prior using this option. Prefix of that agent must be used here 
+rtg scb apb_master apb_env.sv apb_master_trans /home/ius/Naveed/tool_test_folder/apb_tb_3
+  #|Create scoreboard instance|
+  rtg scb_i apb_scb apb_scb_ins2 ACTIVE apb_env.sv /home/ius/Naveed/tool_test_folder/apb_tb_3
+  #|Connect scoreboard with monitor|
+  rtg scb_c apb_env.sv apb_agent_ins apb_monitor_ins apb_monitor_port apb_scb_ins2 port_apb_sent_pkt /home/ius/Naveed/tool_test_folder/apb_tb_3
+
+#|Create new subscriber|
+rtg sbr cov apb_env.sv ACTIVE apb_trans /home/ius/Naveed/tool_test_folder/apb_tb_3
+  #|Create subscriber instance|
+  rtg sbr_i apb_sbr apb_sbr_ins3 ACTIVE apb_env.sv /home/ius/Naveed/tool_test_folder/apb_tb_3

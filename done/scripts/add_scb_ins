@@ -1,0 +1,18 @@
+#!/bin/bash
+
+scoreboard_class=${1:-default_scb};
+scoreboard_ins=${2:-default_scb_ins};
+active=${3:-ACTIVE};
+env_file=${4:-default_env.sv};
+destination=${5:-mydir};
+
+new_f='UVM_NEW';
+build='UVM_'$active'_BUILD';
+connect='UVM_'$active'_CONNECT';
+
+# Make instance of the created scoreboard inside the given environment class
+sed -i "/uvm_env/a $scoreboard_class $scoreboard_ins ;" $destination/$env_file
+
+# Create instance of the scoreboard class inside build_phase of environment class 
+sed -i "/$build/a $scoreboard_ins=$scoreboard_class::type_id::create(\"$scoreboard_ins\",this);" $destination/$env_file
+

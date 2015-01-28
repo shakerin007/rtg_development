@@ -1,0 +1,23 @@
+#!/bin/bash
+
+source /tools/RTG/src_rtg
+
+#Creates basic structure of testbench including a general interface file
+rtg tb apb apb_top.sv /home/ius/Naveed/tool_test_folder/apb_tb_3 apb_test_lib.sv apb_base_test  
+
+#Connects already created interface to the top level file
+rtg intf apb_intf apb_intf apb_env_ins apb_agent_ins apb_top.sv /home/ius/Naveed/tool_test_folder/apb_tb_3
+
+#Connects the interface from the top level to lower level components such as Driver, Monitor
+rtg c_intf apb_intf apb_intf /home/ius/Naveed/tool_test_folder/apb_tb_3 apb_driver.sv apb_monitor.sv
+
+cp ./apb_tb_2/apb_pkg.sv ./apb_tb_3/
+cp ./apb_tb_2/run-me-with-gui ./apb_tb_3/
+
+
+
+
+
+
+
+

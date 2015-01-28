@@ -8,9 +8,6 @@
 	$variable_04=array();
 	$tb_id=$_POST['TB_id'];
 	$_SESSION['tb_id']=$tb_id;
-//	$db_username="root";
-//	$db_password="";
-//	$db_name="rtg_test_1_db";
 	$view=$_POST['view'];
 	$db_username="angryanon";
 	$db_password="";
@@ -19,12 +16,6 @@
 	$port=3306;
 	mysql_connect($host,$db_username,"")or die(mysql_error());
     mysql_select_db($db_name) or die ("Could not get Information from Server");
-	// $sql = "SELECT `cmd_list`.`type`, `tb_info`.`argument1`, `tb_info`.`argument2`, `tb_info`.`argument3`, `tb_info`.`argument4`\n"
-		// . "FROM `tb_list`\n"
-		// . " LEFT JOIN `rtg_test_1_db`.`tb_info` ON `tb_list`.`tb_id` = `tb_info`.`tb_id` \n"
-		// . " LEFT JOIN `rtg_test_1_db`.`cmd_list` ON `tb_info`.`cmd` = `cmd_list`.`cmd` \n"
-		// . "WHERE (`tb_list`.`tb_id` = $tb_id)\n"
-		// . " LIMIT 0, 30 ";
 	$sql = "SELECT `tb_info`.`cmd_id`, `cmd_list`.`type`, `tb_info`.`argument1`, `tb_info`.`argument2`, `tb_info`.`argument3`, `tb_info`.`argument4`\n"
     . "FROM `tb_list`\n"
     . " LEFT JOIN `rtg_test_1_db`.`tb_info` ON `tb_list`.`tb_id` = `tb_info`.`tb_id` \n"
@@ -43,7 +34,6 @@
 		unset($_SESSION['variable_04']);
 		unset($_SESSION['sequencial_command']);
 		unset($_SESSION['sequencial_command_id']);
-		
 		while($row = mysql_fetch_array($query, MYSQL_ASSOC)){
 			array_push($sequencial_command_id,$row['cmd_id']);
 			array_push($sequencial_command,$row['type']);

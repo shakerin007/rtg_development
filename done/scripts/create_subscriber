@@ -1,0 +1,64 @@
+#!/bin/bash
+
+
+#--------------------------------------- How to use it ------------------------------------------------------#
+# this script will do few things
+# 1. It creates subscriber instance inside environmental class 
+# it takes some arguments 
+# this script is written only for using from other scripts
+# it should not be used from terminal 
+#------------------------------------------------------------------------------------------------------------#
+
+subscriber_class=${1:-default_sbr};
+subscriber_ins=${2:-default_sub_ins};
+sequence_item_class=${3:-default_seq_item};
+active=${4:-ACTIVE};
+new_f='UVM_NEW';
+build='UVM_'$active'_BUILD';
+connect='UVM_'$active'_CONNECT';
+env_file=${5:-default_env.sv};
+shift;
+destination=${5:-mydir};
+
+# Make instance of the created subscriber_class inside the given environment class
+sed -i "/uvm_env/a $subscriber_class $subscriber_ins ;" $destination/$env_file
+
+# Create instance of the subscriber_class inside build_phase of environment class 
+sed -i "/$build/a $subscriber_ins=$subscriber_class::type_id::create(\"$subscriber_ins\",this);" $destination/$env_file
+
+
+
+cat << _EOF_
+
+class $subscriber_class  extends uvm_subscriber#($sequence_item_class);
+
+
+	  \`uvm_component_utils($subscriber_class)
+
+
+	    covergroup cov;
+	    endgroup
+
+
+
+	  function new(string name,uvm_component parent);
+			  super.new(name,parent);
+			  cov=new();
+	  endfunction:new
+
+
+
+	  function void write($sequence_item_class t);
+	  endfunction 
+
+
+
+
+endclass:$subscriber_class
+
+
+_EOF_
+
+
+
+#-------------------------------------------------- THE END ---------------------------------------------------------#

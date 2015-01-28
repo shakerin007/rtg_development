@@ -1,0 +1,15 @@
+#!/bin/bash
+
+env_class=${1:-default_env};
+env_ins=${2:-env_ins};
+base_test_file=${3:-test_base.sv};
+active="ACTIVE"
+
+destination=${4:-mydir};
+build='UVM_'$active'_BUILD';
+
+
+
+sed -i "/uvm_test/a $env_class $env_ins ;" $destination/$base_test_file
+sed -i "/$build/a $env_ins=$env_class::type_id::create(\"$env_ins\",this);" $destination/$base_test_file
+
